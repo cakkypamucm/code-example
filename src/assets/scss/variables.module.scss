@@ -1,0 +1,7 @@
+@use "base";
+
+/* stylelint-disable property-no-unknown */
+:export {
+    help-text-color: base.$help-text-color;
+}
+/* stylelint-enable */

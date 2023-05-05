@@ -1,0 +1,66 @@
+@use "base";
+@use "sass:math";
+
+*,
+html,
+*::before,
+*::after {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+#app {
+    display: flex;
+    min-height: 100vh;
+    min-height: 100dvh;
+}
+
+.wrapper-page {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+
+    $wrapper-padding: 20px;
+
+    & > * {
+        padding-right: $wrapper-padding;
+        padding-left: $wrapper-padding;
+
+        &:first-child {
+            padding-top: $wrapper-padding;
+        }
+
+        &:last-child {
+            padding-bottom: $wrapper-padding;
+        }
+    }
+}
+
+.row {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+// stylelint-disable-next-line plugin/no-unsupported-browser-features
+$columns-count: 12;
+
+@for $value from 1 through $columns-count {
+    $percents: math.percentage(calc($value / $columns-count));
+
+    .col-#{$value} {
+        min-height: 1px;
+
+        @include base.column-padding;
+
+        @media (max-width: base.$screen-sm-min) {
+            width: 100%;
+            flex: 0 0 100%;
+        }
+
+        @media (min-width: base.$screen-sm-min + 1) {
+            max-width: $percents;
+            flex: 0 0 $percents;
+        }
+    }
+}
