@@ -4,7 +4,7 @@
 const routerErrorMessage = (scope) =>
     `Router в ${scope} запрещен! Через $emit поднимитесь на уровень страницы и используйте router.`;
 
-const storeErrorMessage = `Store в компонентах запрещен! Используйте props компонентов для получения данных.`;
+const storeErrorMessage = "Store в компонентах запрещен! Используйте props компонентов для получения данных.";
 
 const addPaddingLineAfter = (statement) => [
     { blankLine: "always", prev: statement, next: "*" },
@@ -16,6 +16,7 @@ const routerSelector = "Identifier[name='$router']";
 module.exports = {
     plugins: ["sort-keys", "unused-imports"],
     extends: [
+        "plugin:vuejs-accessibility/recommended",
         "plugin:import/recommended",
         "plugin:promise/recommended",
         "plugin:optimize-regex/recommended",
@@ -27,10 +28,11 @@ module.exports = {
         "airbnb-base",
         "prettier"
     ],
-    /* eslint-enable */
+    /* eslint-enable sort-keys/sort-keys-fix */
     rules: {
         "capitalized-comments": ["error", "never", { ignorePattern: "TODO|FIXME" }],
         "consistent-return": "off",
+        "id-length": [2, { exceptions: ["_", "i", "j"], properties: "never" }],
 
         "import/exports-last": "error",
         "import/extensions": [
@@ -51,8 +53,11 @@ module.exports = {
 
         "no-console": "warn",
         "no-constructor-return": "off",
+        "no-multi-spaces": "error",
         "no-param-reassign": "off",
+        "no-plusplus:": "off",
         "no-promise-executor-return": "off",
+        "no-shadow": "off",
         "no-underscore-dangle": "off",
         "padding-line-between-statements": [
             "error",
@@ -67,7 +72,8 @@ module.exports = {
 
         "require-await": "error",
 
-        "unicorn/consistent-destructuring": "off",
+        "spaced-comment": ["error", "always"],
+
         "unicorn/consistent-function-scoping": "off",
         "unicorn/error-message": "error",
         "unicorn/explicit-length-check": "off",
@@ -77,20 +83,18 @@ module.exports = {
                 case: "kebabCase"
             }
         ],
-        "unicorn/no-abusive-eslint-disable": "off",
         "unicorn/no-array-callback-reference": "off",
         "unicorn/no-array-for-each": "off",
         "unicorn/no-array-reduce": "off",
         "unicorn/no-empty-file": "off",
         "unicorn/no-null": "off",
         "unicorn/no-this-assignment": "off",
-        "unicorn/no-unsafe-regex": "off",
         "unicorn/numeric-separators-style": "off",
         "unicorn/prefer-module": "off",
         "unicorn/prefer-object-from-entries": "off",
         "unicorn/prefer-reflect-apply": "off",
         "unicorn/prefer-string-starts-ends-with": "error",
-        "unicorn/prefer-ternary": "off",
+        "unicorn/prefer-ternary": ["error", "only-single-line"],
         "unicorn/prefer-type-error": "error",
         "unicorn/prevent-abbreviations": "off",
         "unicorn/throw-new-error": "error",
@@ -129,11 +133,6 @@ module.exports = {
             }
         ],
         "vue/no-template-target-blank": "error",
-        "vue/no-undef-properties": "error",
-        "vue/no-unused-properties": [
-            "error",
-            { deepData: true, groups: ["props", "data", "computed", "methods", "setup"] }
-        ],
         "vue/no-unused-refs": "error",
         "vue/no-useless-mustaches": "error",
         "vue/padding-line-between-blocks": "error",

@@ -22,37 +22,41 @@
                 :config="{
                     x: 0,
                     y: 0,
-                    width: fixedAsideWidth + 1,
-                    height: fixedHeaderHeight + 1,
-                    fill: stageBackgroundColor,
-                    strokeWidth: 0
+                    width: config.fixedAside.width + 1,
+                    height: config.fixedHeader.height + 1,
+                    fill: config.stageBackgroundColor
                 }"
             />
             <k-line
                 :config="{
-                    points: [fixedAsideWidth, fixedHeaderHeight + 1, fixedAsideWidth, fixedHeaderHeight - 2],
-                    stroke: fixedLayerBorderStroke
+                    points: [
+                        config.fixedAside.width,
+                        config.fixedHeader.height + 1,
+                        config.fixedAside.width,
+                        config.fixedHeader.height - 2
+                    ],
+                    stroke: config.fixedLayerBorderStroke
                 }"
             />
             <k-text
                 :config="
                     module.timeline.setTextDefaults({
-                        x: 20,
-                        y: 20,
-                        text: 'Номер',
-                        fill: fixedLayerBorderStroke,
-                        fontSize: 12
+                        x: config.fixedAside.textStartX,
+                        y: config.stageScrollbarLayer.airplaneNumber.y,
+                        text: config.airplane.number,
+                        fill: config.fixedLayerBorderStroke,
+                        fontSize: config.stageScrollbarLayer.airplaneNumber.fontSize
                     })
                 "
             />
             <k-text
                 :config="
                     module.timeline.setTextDefaults({
-                        x: 35,
-                        y: 5,
-                        text: 'Дата/время',
-                        fill: fixedLayerBorderStroke,
-                        fontSize: 12
+                        x: config.stageScrollbarLayer.datetime.x,
+                        y: config.stageScrollbarLayer.datetime.y,
+                        text: config.stageScrollbarLayer.datetime.text,
+                        fill: config.fixedLayerBorderStroke,
+                        fontSize: config.stageScrollbarLayer.datetime.fontSize
                     })
                 "
             />
@@ -61,10 +65,9 @@
 </template>
 
 <script>
-import Color from "color";
-import helper from "@/helpers/frontend";
 import module from "../index";
 import useStore from "../store";
+import config from "../config";
 
 // TODO показывать скроллбары с крайним положением не stage, а layer
 // @see https://konvajs.org/docs/sandbox/Canvas_Scrolling.html
@@ -78,7 +81,7 @@ export default {
             type: Object,
             required: true
         },
-        mainlayer: {
+        mainLayer: {
             type: Object,
             required: true
         },
@@ -89,37 +92,19 @@ export default {
         horizontalScrollableLayers: {
             type: Array,
             required: true
-        },
-        fixedAsideWidth: {
-            type: Number,
-            required: true
-        },
-        fixedHeaderHeight: {
-            type: Number,
-            required: true
-        },
-        stageBackgroundColor: {
-            type: String,
-            required: true
-        },
-        fixedLayerBorderStroke: {
-            type: String,
-            required: true
         }
     },
     data() {
-        const minimumGreaterDimension = 64;
-        const regularFill = "#c1c1c1";
         return {
-            module,
             airplanes: useStore().airplanes,
+            config,
+            module,
             scrollBarOptions: {
-                minimumGreaterDimension,
-                width: helper.isMobileDevice() ? 32 : 12,
-                padding: 0,
-                regularFill,
-                activeFill: Color(regularFill).darken(0.1).hex(),
-                opacity: 0.7
+                width: config.stageScrollbarLayer.bar.width,
+                padding: config.stageScrollbarLayer.bar.padding,
+                regularFill: config.stageScrollbarLayer.bar.regularFill,
+                activeFill: config.stageScrollbarLayer.bar.activeFill,
+                opacity: config.stageScrollbarLayer.bar.opacity
             },
             vBarConfig: null,
             hBarConfig: null
@@ -225,36 +210,36 @@ export default {
             const minX = -(module.timeline.totalWidth() - this.stageConfig.width);
             const maxX = 0;
 
-            const x = Math.max(minX, Math.min(this.mainlayer.x() - dx, maxX));
+            const layerX = Math.max(minX, Math.min(this.mainLayer.x() - dx, maxX));
 
             const minY = -(module.timeline.totalHeight() - this.stageConfig.height);
             const maxY = 0;
 
-            const y = Math.max(minY, Math.min(this.mainlayer.y() - dy, maxY));
+            const layerY = Math.max(minY, Math.min(this.mainLayer.y() - dy, maxY));
             if (vBar) {
-                this.verticalScrollableLayers.forEach((layer) => layer.y(y));
+                this.verticalScrollableLayers.forEach((layer) => layer.y(layerY));
             }
             if (hBar) {
-                this.horizontalScrollableLayers.forEach((layer) => layer.x(x));
+                this.horizontalScrollableLayers.forEach((layer) => layer.x(layerX));
             }
 
             const availableHeight = this.stageConfig.height - this.scrollBarOptions.padding * 2 - (vBar?.height() || 0);
             const vy =
-                (this.mainlayer.y() / (-module.timeline.totalHeight() + this.stageConfig.height)) * availableHeight +
+                (this.mainLayer.y() / (-module.timeline.totalHeight() + this.stageConfig.height)) * availableHeight +
                 this.scrollBarOptions.padding;
             vBar?.y(vy);
 
             const availableWidth = this.stageConfig.width - this.scrollBarOptions.padding * 2 - (hBar?.width() || 0);
 
             const hx =
-                (this.mainlayer.x() / (-module.timeline.totalWidth() + this.stageConfig.width)) * availableWidth +
+                (this.mainLayer.x() / (-module.timeline.totalWidth() + this.stageConfig.width)) * availableWidth +
                 this.scrollBarOptions.padding;
             hBar?.x(hx);
         },
 
         // участвует в вычислении размера скроллбара, чтобы было удобно взаимодействовать с ним
         ensureComfortableScrollbarSize(value) {
-            return Math.max(this.scrollBarOptions.minimumGreaterDimension, value);
+            return Math.max(config.stageScrollbarLayer.bar.minimumGreaterDimension, value);
         }
     }
 };

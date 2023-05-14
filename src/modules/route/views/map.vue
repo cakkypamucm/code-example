@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import L from "leaflet";
+import Leaflet from "leaflet";
 import { LMap, LTileLayer, LPolyline, LMarker, LTooltip } from "@vue-leaflet/vue-leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -59,11 +59,11 @@ export default {
             routes: [],
             stopsWithForward: [],
             stopIcons: {
-                forward: L.icon({
+                forward: Leaflet.icon({
                     iconUrl: stopForward,
                     iconSize: [26, 26]
                 }),
-                reverse: L.icon({
+                reverse: Leaflet.icon({
                     iconUrl: stopReverse,
                     iconSize: [26, 26]
                 })
@@ -127,7 +127,7 @@ export default {
                 // @see https://vue2-leaflet.netlify.app/faq/#how-can-i-access-the-leaflet-map-object
                 // если this.$refs.map == null , делаем fitBounds в @map-ready
                 if (this.$refs?.map?.leafletObject) {
-                    this.$refs.map.leafletObject.fitBounds(new L.LatLngBounds(bounds));
+                    this.$refs.map.leafletObject.fitBounds(new Leaflet.LatLngBounds(bounds));
                 } else {
                     this.needToFitBounds = true;
                 }

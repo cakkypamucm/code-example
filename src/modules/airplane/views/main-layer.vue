@@ -6,11 +6,11 @@
                     :config="{
                         points: [
                             0,
-                            fixedHeaderHeight + rowHeight * airplaneIndex,
+                            config.fixedHeader.height + config.rowHeight * airplaneIndex,
                             module.timeline.totalWidth(),
-                            fixedHeaderHeight + rowHeight * airplaneIndex
+                            config.fixedHeader.height + config.rowHeight * airplaneIndex
                         ],
-                        stroke: betweenItemsLineStroke
+                        stroke: config.betweenItemsLineStroke
                     }"
                 />
             </template>
@@ -21,15 +21,15 @@
                     :key="flight.id"
                     :config="{
                         dataId: flight.id,
-                        x: fixedAsideWidth + module.timeline.dateToPx(flight.departureDate),
-                        y: fixedHeaderHeight + rowHeight * airplaneIndex + padding,
+                        x: config.fixedAside.width + module.timeline.dateToPx(flight.departureDate),
+                        y: config.fixedHeader.height + config.rowHeight * airplaneIndex + config.mainLayer.rect.padding,
                         width:
                             module.timeline.dateToPx(flight.arrivalDate) -
                             module.timeline.dateToPx(flight.departureDate),
-                        height: rowHeight - 2 * padding,
-                        fill: regularFill,
-                        stroke: regularFill,
-                        strokeWidth: 2,
+                        height: config.rowHeight - 2 * config.mainLayer.rect.padding,
+                        fill: config.mainLayer.rect.regularFill,
+                        stroke: config.mainLayer.rect.regularFill,
+                        strokeWidth: config.mainLayer.rect.strokeWidth,
                         perfectDrawEnabled: false
                     }"
                     @pointerenter="$emit('flight-rect-pointerenter', flight.id)"
@@ -38,7 +38,14 @@
             </template>
         </template>
         <template v-else>
-            <k-text :config="module.timeline.setTextDefaults(module.timeline.noAirplanesMessageConfig)" />
+            <k-text
+                :config="
+                    module.timeline.setTextDefaults({
+                        text: config.mainLayer.noAirplanesMessage.text,
+                        fill: config.mainLayer.noAirplanesMessage.fill
+                    })
+                "
+            />
         </template>
     </k-layer>
 </template>
@@ -46,46 +53,21 @@
 <script>
 // TODO улучшить производительность на мобильных
 import Konva from "konva";
-import Color from "color";
 import module from "../index";
 import useStore from "../store";
+import config from "../config";
 
 export default {
-    props: {
-        fixedAsideWidth: {
-            type: Number,
-            required: true
-        },
-        fixedHeaderHeight: {
-            type: Number,
-            required: true
-        },
-        rowHeight: {
-            type: Number,
-            required: true
-        },
-        betweenItemsLineStroke: {
-            type: String,
-            required: true
-        },
-        flightRectTimeoutMs: {
-            type: Number,
-            required: true
-        }
-    },
     emits: {
         "flight-rect-pointerdown": (id) => !!id,
         "flight-rect-pointerenter": (id) => !!id,
         "flight-rect-pointerleave": (id) => !!id
     },
     data() {
-        const regularFill = "#8eaaff";
         return {
-            module,
             airplanes: useStore().airplanes,
-            regularFill,
-            activeFill: Color(regularFill).darken(0.25).hex(),
-            padding: 6
+            config,
+            module
         };
     },
 
@@ -100,16 +82,15 @@ export default {
             this.$emit("flight-rect-pointerdown", id);
 
             const rect = event.target;
-            rect.fill(this.activeFill);
-            rect.stroke(this.activeFill);
+            rect.fill(this.config.mainLayer.rect.activeFill);
+            rect.stroke(this.config.mainLayer.rect.activeFill);
 
             setTimeout(() => {
-                rect.fill(this.regularFill);
-                rect.stroke(this.regularFill);
-            }, this.flightRectTimeoutMs);
+                rect.fill(this.config.mainLayer.rect.regularFill);
+                rect.stroke(this.config.mainLayer.rect.regularFill);
+            }, this.config.mainLayer.flightRectTimeoutMs);
         },
 
-        // eslint-disable-next-line vue/no-unused-properties
         getStage() {
             return this.$refs.layer.getStage();
         }

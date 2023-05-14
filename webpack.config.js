@@ -8,7 +8,7 @@ const { VueLoaderPlugin } = require("vue-loader");
 const TerserPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
-// eslint-disable-next-line  import/no-unresolved
+// eslint-disable-next-line import/no-unresolved
 const UnpluginVueComponentsPlugin = require("unplugin-vue-components/webpack");
 
 const webpack = require("webpack");

@@ -1,5 +1,6 @@
 import useStore from "./store";
 import timeline from "./timeline";
+import config from "./config";
 
 export default new (class {
     constructor() {
@@ -17,11 +18,11 @@ export default new (class {
         const airplane = this.store.getAirplaneByFlightId(flightId);
         const flight = this.store.getFlight(flightId);
         if (airplane == null || flight == null) {
-            return `Некорректный flightId`;
+            return "Некорректный flightId";
         }
-        const formatDate = (date) => dayjs(date).format("DD MMM, HH:mm");
-        return `Номер: ${airplane.name}        
-        \nВылет: ${formatDate(flight.departureDate)}
-        \nПосадка: ${formatDate(flight.arrivalDate)}`;
+        const formatDate = (date) => dayjs(date).format(config.flightSummary.dateFormat);
+        return `${config.airplane.number}: ${airplane.name}        
+        \n${config.departure}: ${formatDate(flight.departureDate)}
+        \n${config.arrival}: ${formatDate(flight.arrivalDate)}`;
     }
 })();

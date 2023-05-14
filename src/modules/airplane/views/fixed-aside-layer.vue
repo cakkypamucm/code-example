@@ -4,21 +4,21 @@
             <k-rect
                 :config="{
                     x: 0,
-                    y: fixedHeaderHeight,
-                    width: fixedAsideWidth,
+                    y: config.fixedHeader.height,
+                    width: config.fixedAside.width,
                     height: module.timeline.totalHeight(),
-                    fill: stageBackgroundColor
+                    fill: config.stageBackgroundColor
                 }"
             />
             <template v-for="(airplane, index) in airplanes" :key="airplane.name">
                 <k-text
                     :config="
                         module.timeline.setTextDefaults({
-                            x: startX,
-                            y: fixedHeaderHeight + 10 + rowHeight * index + 4,
+                            x: config.fixedAside.textStartX,
+                            y: config.fixedHeader.height + 10 + config.rowHeight * index + 4,
                             text: airplane.name,
-                            width: fixedAsideWidth - 2 * startX,
-                            fill: fixedLayerBorderStroke
+                            width: config.fixedAside.width - 2 * config.fixedAside.textStartX,
+                            fill: config.fixedLayerBorderStroke
                         })
                     "
                 />
@@ -26,18 +26,18 @@
                     :config="{
                         points: [
                             0,
-                            fixedHeaderHeight + rowHeight * index,
-                            fixedAsideWidth - 1,
-                            fixedHeaderHeight + rowHeight * index
+                            config.fixedHeader.height + config.rowHeight * index,
+                            config.fixedAside.width - 1,
+                            config.fixedHeader.height + config.rowHeight * index
                         ],
-                        stroke: betweenItemsLineStroke
+                        stroke: config.betweenItemsLineStroke
                     }"
                 />
             </template>
             <k-line
                 :config="{
-                    points: [fixedAsideWidth, 0, fixedAsideWidth, module.timeline.totalHeight()],
-                    stroke: fixedLayerBorderStroke
+                    points: [config.fixedAside.width, 0, config.fixedAside.width, module.timeline.totalHeight()],
+                    stroke: config.fixedLayerBorderStroke
                 }"
             />
         </template>
@@ -47,43 +47,17 @@
 <script>
 import module from "../index";
 import useStore from "../store";
+import config from "../config";
 
 export default {
-    props: {
-        fixedAsideWidth: {
-            type: Number,
-            required: true
-        },
-        fixedHeaderHeight: {
-            type: Number,
-            required: true
-        },
-        rowHeight: {
-            type: Number,
-            required: true
-        },
-        stageBackgroundColor: {
-            type: String,
-            required: true
-        },
-        fixedLayerBorderStroke: {
-            type: String,
-            required: true
-        },
-        betweenItemsLineStroke: {
-            type: String,
-            required: true
-        }
-    },
     data() {
         return {
-            module,
             airplanes: useStore().airplanes,
-            startX: 15
+            config,
+            module
         };
     },
     methods: {
-        // eslint-disable-next-line vue/no-unused-properties
         getStage() {
             return this.$refs.layer.getStage();
         }

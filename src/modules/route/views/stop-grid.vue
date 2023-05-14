@@ -50,10 +50,10 @@ export default {
         }
     },
     methods: {
-        rowClicked(e) {
+        rowClicked(ev) {
             this.$emit("stop-click", {
-                id: e.data.stop.id,
-                forward: e.data.forward
+                id: ev.data.stop.id,
+                forward: ev.data.forward
             });
         }
     }

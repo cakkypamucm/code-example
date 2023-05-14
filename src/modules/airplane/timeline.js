@@ -1,26 +1,18 @@
-import scssVars from "@/assets/scss/variables.module";
 import useStore from "./store";
+import moduleConfig from "./config";
 
 export default {
     store: useStore(),
 
-    setWidthCorrectionPx(correctionPx) {
-        this.widthCorrectionPx = correctionPx;
-    },
+    widthCorrectionPx: moduleConfig.fixedAside.width,
 
-    setHeightCorrectionPx(correctionPx) {
-        this.heightCorrectionPx = correctionPx;
-    },
-
-    setRowHeight(rowHeight) {
-        this.rowHeight = rowHeight;
-    },
+    heightCorrectionPx: moduleConfig.fixedHeader.height,
 
     totalHeight() {
         if (this.store.airplanes.length) {
-            return this.heightCorrectionPx + this.store.airplanes.length * this.rowHeight;
+            return this.heightCorrectionPx + this.store.airplanes.length * moduleConfig.rowHeight;
         }
-        return this.noAirplanesMessageHeight;
+        return moduleConfig.mainLayer.noAirplanesMessage.height;
     },
 
     totalWidth() {
@@ -31,10 +23,10 @@ export default {
                 this.getTotalWidthCorrection()
             );
         }
-        return this.noAirplanesMessageWidth;
+        return moduleConfig.mainLayer.noAirplanesMessage.width;
     },
 
-    // cудя по тестовым данным, типичный полёт длится несколько часов => удобно принять, что 1час=60px, 1мин=1px
+    // судя по тестовым данным, типичный полёт длится несколько часов => удобно принять, что 1час=60px, 1мин=1px
     dateToPx(date) {
         const minDate = new Date(this.store.minDepartureMs);
         return dayjs(date).diff(minDate, "minute");
@@ -69,16 +61,6 @@ export default {
     },
 
     setTextDefaults(config) {
-        return _.defaults(config, { fontSize: 16, fontFamily: "Helvetica", wrap: "none", ellipsis: true });
-    },
-
-    noAirplanesMessageWidth: 245,
-    noAirplanesMessageHeight: 16,
-
-    noAirplanesMessageConfig: {
-        text: "Добавьте сюда воздушные суда",
-        fill: scssVars["help-text-color"]
-    },
-
-    floor: Math.floor
+        return _.defaults(config, moduleConfig.fontDefaults);
+    }
 };

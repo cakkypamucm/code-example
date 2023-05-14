@@ -10,7 +10,7 @@ module.exports = {
         "stylelint-config-standard-vue/scss",
         "stylelint-config-idiomatic-order"
     ],
-    /* eslint-enable */
+    /* eslint-enable sort-keys/sort-keys-fix */
     rules: {
         "color-hex-length": "long",
         "declaration-block-no-duplicate-properties": [

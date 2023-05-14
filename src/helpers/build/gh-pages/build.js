@@ -13,7 +13,7 @@ const releaseVersion = process.env.npm_package_version;
     "git checkout HEAD -- .gitignore",
     'copyfiles -u 1 "dist/**/*" .',
     "git add --all"
-].forEach(cli.execSync);
+].forEach((command) => cli.execSync(command));
 
 // @see https://typicode.github.io/husky/#/?id=bypass-hooks --no-verify - для игнора husky
 // обработка ситуации "два раза подряд запустить build" - поскольку файлы не изменятся, то и коммитить нечего

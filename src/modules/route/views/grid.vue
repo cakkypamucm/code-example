@@ -41,8 +41,8 @@ export default {
         }
     },
     methods: {
-        rowClicked(e) {
-            this.$emit("route-click", { id: e.data.id });
+        rowClicked(ev) {
+            this.$emit("route-click", { id: ev.data.id });
         },
         getContextMenuItems(params) {
             return [

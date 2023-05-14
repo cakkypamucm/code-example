@@ -1,36 +1,38 @@
 <template>
     <template v-if="timeline.totalWidth() / timeline.getHourInPx() >= 1">
-        <template v-for="index in timeline.floor(timeline.totalWidth() / timeline.getHourInPx())" :key="index">
+        <template v-for="index in floor(timeline.totalWidth() / timeline.getHourInPx())" :key="index">
             <template v-if="timeline.getCurrentDateByIndex(index).hour() === 0">
                 <k-line
                     :config="{
                         points: [
                             timeline.getCurrentXByIndex(index),
-                            underlineYStartOfDay,
+                            config.timelineLegend.startOfDay.underlineY,
                             timeline.getCurrentXByIndex(index),
-                            fixedHeaderHeight
+                            config.fixedHeader.height
                         ],
-                        stroke: timelinePrimaryColor
+                        stroke: config.timelinePrimaryColor
                     }"
                 />
                 <k-line
                     :config="{
                         points: [
                             timeline.getCurrentXByIndex(index),
-                            underlineYStartOfDay,
+                            config.timelineLegend.startOfDay.underlineY,
                             timeline.getCurrentXByIndex(index) + timeline.getHourInPx(),
-                            underlineYStartOfDay
+                            config.timelineLegend.startOfDay.underlineY
                         ],
-                        stroke: timelinePrimaryColor
+                        stroke: config.timelinePrimaryColor
                     }"
                 />
                 <k-text
                     :config="
                         timeline.setTextDefaults({
                             x: timeline.getCurrentXByIndex(index),
-                            y: 8,
-                            text: timeline.getCurrentDateByIndex(index).format('DD MMM'),
-                            fill: timelinePrimaryColor
+                            y: config.timelineLegend.startOfDay.textStartY,
+                            text: timeline
+                                .getCurrentDateByIndex(index)
+                                .format(config.timelineLegend.startOfDay.dateFormat),
+                            fill: config.timelinePrimaryColor
                         })
                     "
                 />
@@ -40,32 +42,34 @@
                     :config="{
                         points: [
                             timeline.getCurrentXByIndex(index),
-                            underlineYStartOfQuarterDay,
+                            config.timelineLegend.startOfQuarterDay.underlineY,
                             timeline.getCurrentXByIndex(index),
-                            fixedHeaderHeight
+                            config.fixedHeader.height
                         ],
-                        stroke: timelinePrimaryColor
+                        stroke: config.timelinePrimaryColor
                     }"
                 />
                 <k-line
                     :config="{
                         points: [
                             timeline.getCurrentXByIndex(index),
-                            underlineYStartOfQuarterDay,
+                            config.timelineLegend.startOfQuarterDay.underlineY,
                             timeline.getCurrentXByIndex(index) + timeline.getHourInPx() / 2,
-                            underlineYStartOfQuarterDay
+                            config.timelineLegend.startOfQuarterDay.underlineY
                         ],
-                        stroke: timelinePrimaryColor
+                        stroke: config.timelinePrimaryColor
                     }"
                 />
                 <k-text
                     :config="
                         timeline.setTextDefaults({
                             x: timeline.getCurrentXByIndex(index),
-                            y: 18,
-                            fontSize: 12,
-                            text: timeline.getCurrentDateByIndex(index).format('HH:mm'),
-                            fill: timelinePrimaryColor
+                            y: config.timelineLegend.startOfQuarterDay.textStartY,
+                            fontSize: config.timelineLegend.startOfQuarterDay.fontSize,
+                            text: timeline
+                                .getCurrentDateByIndex(index)
+                                .format(config.timelineLegend.startOfQuarterDay.dateFormat),
+                            fill: config.timelinePrimaryColor
                         })
                     "
                 />
@@ -76,23 +80,14 @@
 
 <script>
 import module from "../index";
+import config from "../config";
 
 export default {
-    props: {
-        fixedHeaderHeight: {
-            type: Number,
-            required: true
-        },
-        timelinePrimaryColor: {
-            type: String,
-            required: true
-        }
-    },
     data() {
         return {
+            config,
             timeline: module.timeline,
-            underlineYStartOfDay: 26,
-            underlineYStartOfQuarterDay: 32
+            floor: Math.floor
         };
     }
 };

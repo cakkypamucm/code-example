@@ -1,8 +1,5 @@
-const focus = (el) =>
-    // предотвращает возможную потерю фокуса
-    setImmediate(() => {
-        el.focus();
-    });
+// предотвращает возможную потерю фокуса
+const focus = (el) => setImmediate(() => el.focus());
 
 export default {
     mounted(el, binding) {

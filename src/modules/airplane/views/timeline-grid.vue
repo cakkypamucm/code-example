@@ -1,6 +1,6 @@
 <template>
     <template v-if="timeline.totalWidth() / timeline.getHourInPx() >= 1">
-        <template v-for="index in timeline.floor(timeline.totalWidth() / timeline.getHourInPx())" :key="index">
+        <template v-for="index in floor(timeline.totalWidth() / timeline.getHourInPx())" :key="index">
             <k-line
                 :config="{
                     points: [
@@ -9,8 +9,10 @@
                         timeline.getCurrentXByIndex(index),
                         timeline.totalHeight()
                     ],
-                    stroke: timelinePrimaryColor,
-                    opacity: timeline.isSpecialHour(timeline.getCurrentDateByIndex(index).hour()) ? 1 : 0.3
+                    stroke: config.timelinePrimaryColor,
+                    opacity: timeline.isSpecialHour(timeline.getCurrentDateByIndex(index).hour())
+                        ? config.timelineGrid.opacity.specialHour
+                        : config.timelineGrid.opacity.regularHour
                 }"
             />
         </template>
@@ -19,17 +21,14 @@
 
 <script>
 import module from "../index";
+import config from "../config";
 
 export default {
-    props: {
-        timelinePrimaryColor: {
-            type: String,
-            required: true
-        }
-    },
     data() {
         return {
-            timeline: module.timeline
+            config,
+            timeline: module.timeline,
+            floor: Math.floor
         };
     }
 };

@@ -1,24 +1,26 @@
 <template>
     <app-layout-page-default>
+        <div class="fps">FPS: {{ fps }}</div>
         <div ref="stageContainer" class="stage-container">
             <k-stage v-if="configs.stage.height" ref="stage" :config="configs.stage">
                 <main-layer
                     ref="main"
-                    v-bind="configs.mainLayer.props"
                     @flight-rect-pointerdown="
-                        toast.showInfo(module.getFlightSummary($event), { timeout: flightRectTimeoutMs })
+                        toast.showInfo(module.getFlightSummary($event), {
+                            timeout: moduleConfig.mainLayer.flightRectTimeoutMs
+                        })
                     "
                     @flight-rect-pointerenter="stage.container().style.cursor = 'pointer'"
                     @flight-rect-pointerleave="stage.container().style.cursor = 'default'"
                 >
                     <template #timeline-grid>
-                        <timeline-grid v-bind="configs.timelineGrid.props" />
+                        <timeline-grid />
                     </template>
                 </main-layer>
-                <fixed-aside-layer ref="fixedAside" v-bind="configs.fixedAside.props" />
-                <fixed-header-layer ref="fixedHeader" v-bind="configs.fixedHeader.props">
+                <fixed-aside-layer ref="fixedAside" />
+                <fixed-header-layer ref="fixedHeader">
                     <template #timeline-legend>
-                        <timeline-legend v-bind="configs.timelineLegend.props" />
+                        <timeline-legend />
                     </template>
                 </fixed-header-layer>
                 <stage-scrollbar-layer
@@ -31,7 +33,7 @@
 </template>
 
 <script>
-import Color from "color";
+import { useFps } from "@vueuse/core";
 import module from "@/modules/airplane";
 import useStore from "@/modules/airplane/store";
 
@@ -43,6 +45,7 @@ import TimelineGrid from "@/modules/airplane/views/timeline-grid";
 import TimelineLegend from "@/modules/airplane/views/timeline-legend";
 
 import toast from "@/modules/toast";
+import moduleConfig from "@/modules/airplane/config";
 
 export default {
     components: {
@@ -54,21 +57,8 @@ export default {
         TimelineLegend
     },
     data() {
-        const betweenItemsLineStroke = "#cecece";
         return {
-            stageBackgroundColor: "white",
-
-            betweenItemsLineStroke,
-
-            timelinePrimaryColor: Color(betweenItemsLineStroke).darken(0.4).hex(),
-
-            rowHeight: 40,
-
-            fixedLayerBorderStroke: "black",
-            fixedHeaderHeight: 40,
-            fixedAsideWidth: 110,
-
-            flightRectTimeoutMs: 4000,
+            moduleConfig,
 
             module,
             store: useStore(),
@@ -78,20 +68,18 @@ export default {
             stage: null,
 
             configs: {
-                stage: {},
-                mainLayer: {},
-                fixedAside: {},
-                fixedHeader: {},
+                stage: {
+                    width: 0,
+                    height: 0
+                },
                 stageScrollbar: {
                     props: {
                         readyToMount: false
                     }
-                },
-                timelineGrid: {},
-                timelineLegend: {}
+                }
             },
 
-            noAirplanesMessageWidth: module.timeline.noAirplanesMessageWidth
+            fps: useFps()
         };
     },
     watch: {
@@ -112,63 +100,29 @@ export default {
     methods: {
         async init() {
             await module.fetch();
-            module.timeline.setWidthCorrectionPx(this.fixedAsideWidth);
-            module.timeline.setHeightCorrectionPx(this.fixedHeaderHeight);
-            module.timeline.setRowHeight(this.rowHeight);
             await this.initConfigs();
         },
 
-        /* eslint-disable vue/no-undef-properties */
         async initConfigs() {
-            this.configs.mainLayer.props = Object.fromEntries(
-                this.entriesThisProps(
-                    "fixedAsideWidth fixedHeaderHeight rowHeight betweenItemsLineStroke flightRectTimeoutMs"
-                )
-            );
-
-            this.configs.fixedAside.props = Object.fromEntries(
-                this.entriesThisProps(
-                    "fixedAsideWidth fixedHeaderHeight rowHeight stageBackgroundColor fixedLayerBorderStroke betweenItemsLineStroke"
-                )
-            );
-
-            this.configs.fixedHeader.props = Object.fromEntries(
-                this.entriesThisProps("fixedHeaderHeight fixedAsideWidth stageBackgroundColor fixedLayerBorderStroke")
-            );
-
-            this.configs.stageScrollbar.props = Object.fromEntries(
-                this.entriesThisProps("fixedAsideWidth fixedHeaderHeight stageBackgroundColor fixedLayerBorderStroke")
-            );
-
-            this.configs.timelineGrid.props = Object.fromEntries(this.entriesThisProps("timelinePrimaryColor"));
-
-            this.configs.timelineLegend.props = Object.fromEntries(
-                this.entriesThisProps("fixedHeaderHeight timelinePrimaryColor")
-            );
-
             window.addEventListener("resize", _.throttle(this.actualizeStageDimensions, 100));
             this.actualizeStageDimensions();
 
             await this.$nextTick();
             this.stage = this.$refs.stage.getStage();
-            this.stage.container().style.backgroundColor = this.stageBackgroundColor;
+            this.stage.container().style.backgroundColor = this.moduleConfig.stageBackgroundColor;
 
-            const mainlayer = this.$refs.main.getStage();
+            const mainLayer = this.$refs.main.getStage();
             const fixedAsideLayer = this.$refs.fixedAside.getStage();
-            const fixedHeaderlayer = this.$refs.fixedHeader.getStage();
+            const fixedHeaderLayer = this.$refs.fixedHeader.getStage();
 
             Object.assign(this.configs.stageScrollbar.props, {
                 stage: this.stage,
                 stageConfig: this.configs.stage,
-                mainlayer,
-                verticalScrollableLayers: [mainlayer, fixedAsideLayer],
-                horizontalScrollableLayers: [mainlayer, fixedHeaderlayer]
+                mainLayer,
+                verticalScrollableLayers: [mainLayer, fixedAsideLayer],
+                horizontalScrollableLayers: [mainLayer, fixedHeaderLayer]
             });
             this.configs.stageScrollbar.props.readyToMount = true;
-        },
-
-        entriesThisProps(props) {
-            return props.split(" ").map((prop) => [prop, this[prop]]);
         },
 
         actualizeStageDimensions() {
@@ -180,13 +134,13 @@ export default {
             }
             this.stage.getContainer().style.border = `${this.store.airplanes.length ? "1px solid black" : "none"}`;
         }
-        /* eslint-enable */
     }
 };
 </script>
 
 <style lang="scss" scoped>
 @use "sass:math";
+@use "@/assets/scss/_base";
 
 :deep(.main) {
     display: flex;
@@ -194,9 +148,19 @@ export default {
     justify-content: center;
 }
 
+.fps {
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background: v-bind("moduleConfig.stageBackgroundColor");
+
+    @include base.column-padding;
+}
+
 .stage-container {
     display: flex;
-    min-width: calc(v-bind(noAirplanesMessageWidth) * 1px);
+    min-width: calc(v-bind("moduleConfig.mainLayer.noAirplanesMessage.width") * 1px);
     min-height: 300px;
     align-items: center;
     justify-content: center;
