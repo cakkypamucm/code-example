@@ -41,11 +41,13 @@ export default class Auth {
     async login() {
         const data = await this.store.login();
         const currentRoute = this.getCurrentRoute();
-        const { redirectPath } = currentRoute.query;
-        if (!redirectPath || redirectPath === currentRoute.path) {
-            this.$router.push({ name: "index" });
+        const {
+            redirect: { path, query }
+        } = currentRoute.query;
+        if (!path || path === currentRoute.path) {
+            this.$router.push({ name: "index", query });
         } else {
-            this.$router.push({ path: redirectPath, replace: true });
+            this.$router.push({ path, query, replace: true });
         }
         return data;
     }

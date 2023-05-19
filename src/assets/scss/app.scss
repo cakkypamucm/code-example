@@ -2,6 +2,11 @@
 @import "normalize.css";
 @import "layout";
 
+$fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
+
+@import "~@fortawesome/fontawesome-free/scss/fontawesome";
+@import "~@fortawesome/fontawesome-free/scss/solid";
+
 * {
     font-family: Helvetica, serif;
 }
@@ -12,6 +17,10 @@
 
 .help-text {
     color: base.$help-text-color;
+}
+
+.d-inline-block {
+    display: inline-block;
 }
 
 .w-100 {

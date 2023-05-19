@@ -63,7 +63,7 @@ module.exports = () => ({
                 use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader", "sass-loader"]
             },
             {
-                test: /\.(?:gif|png|svg)$/i,
+                test: /\.(?:gif|png|svg|woff|woff2|ttf|eot)$/i,
                 type: "asset/inline"
             }
         ]
@@ -88,7 +88,8 @@ module.exports = () => ({
                 fetchRetries: {
                     count: 2,
                     intervalMs: 50
-                }
+                },
+                productionAbsoluteUrl: "//github.com/cakkypamucm"
             })
         }),
         new CopyPlugin({

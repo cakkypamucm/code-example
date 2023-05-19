@@ -1,6 +1,12 @@
 import { createRouter, createWebHashHistory, createWebHistory } from "vue-router";
+import qs from "qs";
+import { unref } from "vue";
 import supportedBrowsers from "@/helpers/supported-browsers-regexp";
 import Auth from "@/modules/auth/index";
+import helper from "@/helpers/frontend";
+
+let lastVisitedRouteData;
+const lastVisitedRouteDataStorageId = "app.lastVisitedRoute";
 
 function createPage(path) {
     // eslint-disable-next-line import/extensions
@@ -8,40 +14,70 @@ function createPage(path) {
 }
 
 const nameBrowserIsNotSupported = "browser-is-not-supported";
+const konvaRouteName = "aircraft.flights.konva";
 const isBrowserNotSupported = () => !supportedBrowsers.test(navigator.userAgent);
 const router = createRouter({
     history: (process.env.NODE_ENV === "production" ? createWebHashHistory : createWebHistory)("/"),
+    parseQuery(query) {
+        return qs.parse(query);
+    },
+    stringifyQuery(query) {
+        return qs.stringify(query) || "";
+    },
     routes: [
         {
             path: "/",
             name: "index",
-            redirect: { name: "flights" }
+            redirect: { name: konvaRouteName }
         },
+
         {
-            path: "/flights",
-            name: "flights",
-            component: () => createPage("flights/index"),
+            path: "/aircraft/flights/konva",
+            name: konvaRouteName,
+            component: () => createPage("aircraft/flights/konva/index"),
             meta: {
-                title: "Перелеты"
+                title: "Перелеты konva"
             }
         },
         {
-            path: "/routes",
-            name: "routes",
-            component: () => createPage("routes/index"),
+            path: "/aircraft/flights/highcharts-gantt",
+            name: "aircraft.flights.gantt",
+            component: () => createPage("aircraft/flights/highcharts-gantt/index"),
             meta: {
-                title: "Маршруты"
+                title: "Перелеты highcharts-gantt"
             }
         },
         {
-            path: "/routes/:id(\\d+)",
-            name: "routes-id",
-            component: () => createPage("routes/[id]"),
+            path: "/aircraft",
+            redirect: { path: "/aircraft/flights" }
+        },
+        {
+            path: "/aircraft/flights",
+            redirect: { name: konvaRouteName }
+        },
+
+        {
+            path: "/vehicle/routes",
+            name: "vehicle.routes",
+            component: () => createPage("vehicle/routes/index"),
+            meta: {
+                title: "Маршруты транспортных средств"
+            }
+        },
+        {
+            path: "/vehicle/routes/:id(\\d+)",
+            name: "vehicle.routes.id",
+            component: () => createPage("vehicle/routes/[id]"),
             props: (route) => ({ id: +route.params.id }),
             meta: {
-                title: "Маршрут {{ id }}"
+                title: "Маршрут {{ id }} транспортного средства"
             }
         },
+        {
+            path: "/vehicle",
+            redirect: { name: "vehicle.routes" }
+        },
+
         {
             path: "/login",
             name: "login",
@@ -68,7 +104,11 @@ const router = createRouter({
                 try {
                     await new Auth(router).logout();
                 } finally {
-                    next({ name: "login", query: { redirectPath: from.path }, replace: true });
+                    next({
+                        name: "login",
+                        query: { redirect: { path: lastVisitedRouteData.path, query: lastVisitedRouteData.query } },
+                        replace: true
+                    });
                 }
             },
             meta: {
@@ -96,6 +136,7 @@ const router = createRouter({
             name: "not-found",
             component: () => createPage("not-found"),
             meta: {
+                public: true,
                 title: "Страница не найдена"
             }
         }
@@ -104,6 +145,9 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
     document.title = _.template(to?.meta?.title || "\uFEFF")(to.params);
+
+    lastVisitedRouteData = helper.storage.get(lastVisitedRouteDataStorageId);
+    helper.storage.remove(lastVisitedRouteDataStorageId);
 
     if (isBrowserNotSupported() && to.name !== nameBrowserIsNotSupported) {
         next({ name: nameBrowserIsNotSupported, replace: true });
@@ -116,11 +160,16 @@ router.beforeEach(async (to, from, next) => {
             next();
             return;
         }
-        next({ name: "login", query: { redirectPath: to.path } });
+        next({ name: "login", query: { redirect: { path: to.path, query: to.query } } });
         return;
     }
 
     next();
+});
+
+window.addEventListener("beforeunload", () => {
+    const route = unref(router.currentRoute);
+    helper.storage.set(lastVisitedRouteDataStorageId, { path: route.path, query: route.query });
 });
 
 export default router;

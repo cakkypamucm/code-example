@@ -41,8 +41,7 @@ module.exports = {
         "unit-disallowed-list": [
             ["vw", "vh"],
             {
-                message:
-                    "Используйте (d|s|l)v* вместо v*, как некорректных единиц на мобильных устройствах из-за адресной строки",
+                message: "Используйте (d|s|l)v* вместо v*, как некорректных единиц на mobile из-за urlbar",
                 severity: "warning"
             }
         ]

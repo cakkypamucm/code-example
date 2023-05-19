@@ -3,9 +3,9 @@ import helper from "@/helpers/frontend";
 class Service {
     constructor() {
         this.storageIds = {
-            userData: "app-user-data",
-            firstTime: "app-user-first-time",
-            packageVersion: "app-package-version"
+            userData: "app.user.data",
+            firstTime: "app.user.first.time",
+            packageVersion: "app.package.version"
         };
         this.userData = {
             id: 1,

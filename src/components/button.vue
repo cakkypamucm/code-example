@@ -27,6 +27,7 @@ button {
     padding: 0.375rem 0.75rem;
     border: 1px solid $secondary-color;
     border-radius: 0.25rem;
+    margin-right: 20px;
     background-color: $primary-color;
     color: $secondary-color;
     cursor: pointer;
@@ -40,10 +41,6 @@ button {
     user-select: none;
     vertical-align: middle;
     white-space: nowrap;
-
-    & + & {
-        margin-left: 20px;
-    }
 
     &:active {
         border: 1px solid $secondary-color;
