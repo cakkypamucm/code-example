@@ -8,9 +8,9 @@
 <script>
 import { useFps } from "@vueuse/core";
 import { useRoute } from "vue-router";
-import module from "@/modules/aircraft";
-import moduleConfig from "@/modules/aircraft/config";
-import HighchartsGantt from "@/modules/aircraft/views/main-layer-highcharts-gantt";
+import module from "src/modules/aircraft";
+import moduleConfig from "src/modules/aircraft/config";
+import HighchartsGantt from "src/modules/aircraft/views/layers/highcharts-gantt";
 
 export default {
     components: {
@@ -35,7 +35,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@use "@/assets/scss/_base";
+@use "src/css/_base";
 
 :deep(.main) {
     display: flex;

@@ -8,8 +8,8 @@ import { AgGridVue } from "ag-grid-vue3";
 import "ag-grid-enterprise/styles/ag-grid.css";
 import "ag-grid-enterprise/styles/ag-theme-alpine.css";
 
-import localeRu from "@/plugins/ag-grid-locale-ru";
-import helper from "@/helpers/frontend";
+import localeRu from "src/plugins/ag-grid-locale-ru";
+import helper from "src/helpers/frontend";
 
 export default {
     components: {

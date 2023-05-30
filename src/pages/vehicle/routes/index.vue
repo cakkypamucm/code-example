@@ -40,10 +40,10 @@
 </template>
 
 <script>
-import routeModule from "@/modules/vehicle-route/index";
-import RoutesGrid from "@/modules/vehicle-route/views/grid";
-import StopGrid from "@/modules/vehicle-route/views/stop-grid";
-import RoutesMap from "@/modules/vehicle-route/views/map";
+import routeModule from "src/modules/vehicle/index";
+import RoutesGrid from "src/modules/vehicle/views/grid";
+import StopGrid from "src/modules/vehicle/views/stop-grid";
+import RoutesMap from "src/modules/vehicle/views/map";
 
 export default {
     components: {
@@ -91,7 +91,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@use "@/assets/scss/_base";
+@use "src/css/_base";
 
 :deep(.main) {
     display: flex;

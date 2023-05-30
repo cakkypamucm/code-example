@@ -1,18 +1,22 @@
 import useStore from "./store";
-import moduleConfig from "./config";
+import config from "./config";
 
 export default {
     store: useStore(),
 
-    widthCorrectionPx: moduleConfig.fixedAside.width,
+    setWidthCorrectionPx(widthCorrectionPx) {
+        this.widthCorrectionPx = widthCorrectionPx;
+    },
 
-    heightCorrectionPx: moduleConfig.fixedHeader.height,
+    setHeightCorrectionPx(heightCorrectionPx) {
+        this.heightCorrectionPx = heightCorrectionPx;
+    },
 
     totalHeight() {
         if (this.store.aircrafts.length) {
-            return this.heightCorrectionPx + this.store.aircrafts.length * moduleConfig.rowHeight;
+            return this.heightCorrectionPx + this.store.aircrafts.length * config.row.height;
         }
-        return moduleConfig.mainLayer.noAircraftsMessage.height;
+        return config.mainLayer.noAircraftsMessage.height;
     },
 
     totalWidth() {
@@ -23,7 +27,7 @@ export default {
                 this.getTotalWidthCorrection()
             );
         }
-        return moduleConfig.mainLayer.noAircraftsMessage.width;
+        return config.mainLayer.noAircraftsMessage.width;
     },
 
     // судя по тестовым данным, типичный полёт длится несколько часов => удобно принять, что 1час=60px, 1мин=1px
@@ -57,6 +61,7 @@ export default {
     },
 
     isSpecialHour(hour) {
-        return hour % 6 === 0;
+        const hoursCountInQuarterOfDay = 6;
+        return hour % hoursCountInQuarterOfDay === 0;
     }
 };

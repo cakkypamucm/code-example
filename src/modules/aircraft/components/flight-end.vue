@@ -1,30 +1,24 @@
 <template>
-    <app-k-line
+    <app-k-arrow
         :config="{
-            points: [
-                baseX,
-                baseY,
-                baseX,
-                baseY + config.arrow.mainHeight,
-                baseX - config.arrow.pointerSize,
-                baseY + config.arrow.mainHeight - config.arrow.pointerSize,
-                baseX,
-                baseY + config.arrow.mainHeight,
-                baseX + config.arrow.pointerSize,
-                baseY + config.arrow.mainHeight - config.arrow.pointerSize
-            ],
-            stroke: config.arrow.color
+            x: baseX,
+            y: baseY,
+            points: [0, 0, 0, config.arrow.length],
+            pointerLength: config.arrow.pointerSize,
+            pointerWidth: config.arrow.pointerSize,
+            fill: config.arrow.color,
+            stroke: config.arrow.color,
+            strokeWidth: config.arrow.strokeWidth
         }"
     />
     <app-k-text
         :config="{
-            text: date,
-            x: pos.end.x - config.arrow.pointerSize - 5,
-            y: pos.end.y - pos.padding.y + config.arrow.pointerSize - pos.padding.date,
+            text: dateFormatted,
+            x: baseX + padding.x - 2 * config.arrow.pointerSize - config.arrow.strokeWidth - 1,
+            y: baseY - config.arrow.correctionRelatedFontDateY,
             rotation: 90,
             align: 'left',
-            width: 50,
-            fontSize: 10
+            fontSize: config.arrow.fontSize
         }"
     />
 </template>
@@ -34,24 +28,34 @@ import config from "../config";
 
 export default {
     props: {
-        flight: {
+        pos: {
             type: Object,
             required: true
         },
-        pos: {
+        arrivalDate: {
+            type: Date,
+            required: true
+        },
+        padding: {
             type: Object,
             required: true
         }
     },
     data() {
         return {
-            config,
-
-            baseX: this.pos.end.x - this.pos.padding.x,
-            baseY: this.pos.end.y - this.pos.flight.height + this.pos.padding.y,
-
-            date: dayjs(this.flight.arrivalDate).format("HH:mm")
+            config
         };
+    },
+    computed: {
+        dateFormatted() {
+            return dayjs(this.arrivalDate).format("HH:mm");
+        },
+        baseX() {
+            return this.pos.end.x - this.padding.x;
+        },
+        baseY() {
+            return this.pos.start.y + this.padding.y;
+        }
     }
 };
 </script>

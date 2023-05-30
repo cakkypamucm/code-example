@@ -1,4 +1,4 @@
-import helper from "@/helpers/frontend";
+import helper from "src/helpers/frontend";
 
 class Service {
     constructor() {

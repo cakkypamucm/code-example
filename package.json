@@ -1,18 +1,18 @@
 {
     "name": "code-example",
-    "version": "1.11.2",
+    "version": "1.16.9",
     "private": true,
     "main": "src/index.js",
     "scripts": {
         "start": "webpack serve --node-env development",
         "git-update-index": "git update-index --again",
-        "gh-pages-create": "node src/helpers/build/gh-pages/create.js",
-        "gh-pages-build": "node src/helpers/build/gh-pages/build.js",
-        "husky-install": "node src/helpers/build/husky-init.js",
+        "gh-pages-create": "node src/helpers/build/gh-pages/create.cjs",
+        "gh-pages-build": "node src/helpers/build/gh-pages/build.cjs",
+        "husky-install": "node src/helpers/build/husky-init.cjs",
         "build-browserslist-regexp": "(echo export default && browserslist-useragent-regexp --ignoreMinor --allowHigherVersions) > src/helpers/supported-browsers-regexp.js",
-        "eslint": "eslint --cache --fix \"src/**/*.{js,vue,md}\" \"*.{js,md}\"",
+        "eslint": "eslint --cache --fix \"src/**/*.{cjs,js,vue,md}\" \"*.{cjs,js,md}\"",
         "stylelint": "stylelint --cache --fix \"src/**/*.{css,scss,vue}\"",
-        "prettier": "prettier --cache --cache-location .prettiercache --find-config-path --write \"{src,public}/**/*.{css,scss,js,json,vue,md,html}\" \"*.{js,json,md}\" \"!(package)*.json\"",
+        "prettier": "prettier --cache --cache-location .prettiercache --find-config-path --write \"{src,public}/**/*.{css,scss,cjs,js,json,vue,md,html}\" \"*.{cjs,js,json,md}\" \"!(package)*.json\"",
         "husky-precommit": "run-s lint git-update-index",
         "lint": "run-s eslint stylelint prettier",
         "postinstall": "run-p gh-pages-create husky-install"
@@ -32,7 +32,6 @@
         "css-minimizer-webpack-plugin": "^5.0.0",
         "eslint": "^7.32.0",
         "eslint-config-cakkypamucm": "github:cakkypamucm/eslint-config",
-        "eslint-plugin-sort-keys": "^2.3.5",
         "html-webpack-plugin": "^5.5.0",
         "husky": "^8.0.3",
         "mini-css-extract-plugin": "^2.7.5",
@@ -45,10 +44,7 @@
         "sass": "^1.61.0",
         "sass-loader": "^13.2.2",
         "stylelint": "^14.16.1",
-        "stylelint-config-idiomatic-order": "^9.0.0",
-        "stylelint-config-standard-scss": "^6.1.0",
-        "stylelint-config-standard-vue": "^1.0.0",
-        "stylelint-no-unsupported-browser-features": "^6.1.0",
+        "stylelint-config-cakkypamucm": "github:cakkypamucm/stylelint-config",
         "terser-webpack-plugin": "^5.3.7",
         "unplugin-vue-components": "^0.24.1",
         "vue-loader": "^17.0.1",
@@ -57,6 +53,7 @@
         "webpack-dev-server": "^4.13.2"
     },
     "dependencies": {
+        "@fontsource/roboto-slab": "^5.0.2",
         "@fortawesome/fontawesome-free": "^6.4.0",
         "@vue-leaflet/vue-leaflet": "^0.9.0",
         "@vueuse/core": "^10.1.2",
@@ -68,6 +65,7 @@
         "color": "^4.2.3",
         "core-js": "^3.30.0",
         "dayjs": "^1.11.7",
+        "fontfaceobserver": "^2.3.0",
         "highcharts": "^11.0.1",
         "highcharts-vue": "^1.4.0",
         "konva": "^9.0.0",
@@ -78,18 +76,21 @@
         "pinia": "^2.0.34",
         "qs": "^6.11.2",
         "store2": "^2.14.2",
-        "stylelint-config-recommended-vue": "^1.4.0",
         "vue": "^3.2.47",
         "vue-konva": "^3.0.2",
         "vue-promised": "^2.2.0",
         "vue-router": "^4.1.6",
-        "vue-toastification": "^2.0.0-rc.5"
+        "vue-toastification": "^2.0.0-rc.5",
+        "eslint-plugin-vue": "^7.20.0",
+        "eslint-plugin-vue-scoped-css": "^2.4.0",
+        "vue-eslint-parser": "^7.11.0",
+        "web-vitals": "^3.3.2"
     },
     "engines": {
         "node": ">=14"
     },
     "_moduleAliases": {
-        "@@": ".",
-        "@": "./src"
+        "app": ".",
+        "src": "./src"
     }
 }

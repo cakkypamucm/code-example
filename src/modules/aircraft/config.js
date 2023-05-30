@@ -1,6 +1,6 @@
 import Color from "color";
-import scssVars from "@/assets/scss/variables.module";
-import helper from "@/helpers/frontend";
+import scssVars from "src/css/variables.module";
+import helper from "src/helpers/frontend";
 
 const betweenItemsLineStroke = "#cecece";
 const mainLayerRectRegularFill = "#8eaaff";
@@ -10,9 +10,15 @@ const shortTimeFormat = "H";
 const timeFormat = `HH:mm`;
 const shortDateFormat = "DD.MM";
 const dateFormat = `DD MMM, ${timeFormat}`;
-export default {
-    rowHeight: 60,
 
+const noAircraftsMessageText = "Добавьте сюда воздушные суда";
+const noAircraftsFontSize = 16;
+
+export default {
+    row: {
+        height: 60,
+        padding: 6
+    },
     stageBackgroundColor: "white",
     fixedLayerBorderStroke: "black",
 
@@ -24,13 +30,14 @@ export default {
         rect: {
             regularFill: mainLayerRectRegularFill,
             activeFill: Color(mainLayerRectRegularFill).darken(0.25).hex(),
-            padding: 6,
+            minimumPaddingX: 5,
             strokeWidth: 2
         },
         noAircraftsMessage: {
-            width: 245,
-            height: 16,
-            text: "Добавьте сюда воздушные суда",
+            width: helper.canvas.getTextWidth({ text: noAircraftsMessageText, fontSize: noAircraftsFontSize }),
+            height: helper.canvas.getTextHeight({ fontSize: noAircraftsFontSize }),
+            text: noAircraftsMessageText,
+            fontSize: noAircraftsFontSize,
             fill: scssVars["help-text-color"]
         }
     },
@@ -97,17 +104,21 @@ export default {
         prefixName: "RA-"
     },
 
-    serviceModes: {
-        availability: {
-            id: "availability",
-            color: "#7f84ea",
-            text: "Availability"
-        },
+    flight: {
+        types: {
+            service: {
+                availability: {
+                    id: "availability",
+                    fill: "#7f84ea",
+                    text: "Availability"
+                },
 
-        maintenance: {
-            id: "maintenance",
-            color: "#cd7e31",
-            text: "Maintenance"
+                maintenance: {
+                    id: "maintenance",
+                    fill: "#cd7e31",
+                    text: "Maintenance"
+                }
+            }
         }
     },
 
@@ -115,7 +126,9 @@ export default {
         color: "black",
         pointerSize: 2,
         strokeWidth: 2,
-        mainHeight: 20
+        length: 20,
+        fontSize: 10,
+        correctionRelatedFontDateY: 3
     },
 
     brackets: {

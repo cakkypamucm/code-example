@@ -1,21 +1,20 @@
 import { createRouter, createWebHashHistory, createWebHistory } from "vue-router";
 import qs from "qs";
 import { unref } from "vue";
-import supportedBrowsers from "@/helpers/supported-browsers-regexp";
-import Auth from "@/modules/auth/index";
-import helper from "@/helpers/frontend";
-
-let lastVisitedRouteData;
-const lastVisitedRouteDataStorageId = "app.lastVisitedRoute";
+import { onFCP, onLCP } from "web-vitals";
+import supportedBrowsersRE from "src/helpers/supported-browsers-regexp";
+import Auth from "src/modules/auth/index";
+import helper from "src/helpers/frontend";
 
 function createPage(path) {
     // eslint-disable-next-line import/extensions
-    return import(/* webpackChunkName: "[request]" */ `@/pages/${path}.vue`);
+    return import(/* webpackChunkName: "[request]" */ `src/pages/${path}.vue`);
 }
-
+let lastVisitedRouteData;
+const lastVisitedRouteDataStorageId = "app.lastVisitedRoute";
 const nameBrowserIsNotSupported = "browser-is-not-supported";
 const konvaRouteName = "aircraft.flights.konva";
-const isBrowserNotSupported = () => !supportedBrowsers.test(navigator.userAgent);
+const isBrowserNotSupported = () => !supportedBrowsersRE.test(navigator.userAgent);
 const router = createRouter({
     history: (process.env.NODE_ENV === "production" ? createWebHashHistory : createWebHistory)("/"),
     parseQuery(query) {
@@ -28,7 +27,7 @@ const router = createRouter({
         {
             path: "/",
             name: "index",
-            redirect: { name: konvaRouteName }
+            redirect: { name: "aircraft.flights.konva.nativeScrollbars" }
         },
 
         {
@@ -45,6 +44,14 @@ const router = createRouter({
             component: () => createPage("aircraft/flights/highcharts-gantt/index"),
             meta: {
                 title: "Перелеты highcharts-gantt"
+            }
+        },
+        {
+            path: "/aircraft/flights/konva/native-scrollbars",
+            name: "aircraft.flights.konva.nativeScrollbars",
+            component: () => createPage("aircraft/flights/konva/native-scrollbars"),
+            meta: {
+                title: "Перелеты konva native-scrollbars"
             }
         },
         {
@@ -146,7 +153,7 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
     document.title = _.template(to?.meta?.title || "\uFEFF")(to.params);
 
-    lastVisitedRouteData = helper.storage.get(lastVisitedRouteDataStorageId);
+    lastVisitedRouteData = helper.storage.get(lastVisitedRouteDataStorageId) || {};
     helper.storage.remove(lastVisitedRouteDataStorageId);
 
     if (isBrowserNotSupported() && to.name !== nameBrowserIsNotSupported) {
@@ -171,5 +178,12 @@ window.addEventListener("beforeunload", () => {
     const route = unref(router.currentRoute);
     helper.storage.set(lastVisitedRouteDataStorageId, { path: route.path, query: route.query });
 });
+
+function logMetric(metric) {
+    console.debug(`${metric.name}: ${Math.ceil(metric.value)}ms == '${metric.rating}'`);
+}
+
+onFCP(logMetric);
+onLCP(logMetric);
 
 export default router;

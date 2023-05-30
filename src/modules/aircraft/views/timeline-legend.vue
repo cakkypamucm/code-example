@@ -29,7 +29,6 @@
                         text: timeline.getCurrentDateByIndex(index).format(config.timelineLegend.startOfDay.dateFormat),
                         x: timeline.getCurrentXByIndex(index),
                         y: config.timelineLegend.startOfDay.textStartY,
-                        width: timeline.getHourInPx(),
                         fill: config.timelinePrimaryColor
                     }"
                 />
@@ -64,7 +63,6 @@
                             .format(config.timelineLegend.startOfQuarterDay.dateFormat),
                         x: timeline.getCurrentXByIndex(index),
                         y: config.timelineLegend.startOfQuarterDay.textStartY,
-                        width: timeline.getHourInPx() * 0.6,
                         fontSize: config.timelineLegend.startOfQuarterDay.fontSize,
                         fill: config.timelinePrimaryColor
                     }"

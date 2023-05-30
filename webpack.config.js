@@ -13,8 +13,6 @@ const UnpluginVueComponentsPlugin = require("unplugin-vue-components/webpack");
 
 const webpack = require("webpack");
 
-const packageJson = require("./package.json");
-
 const uniqueFileName = "[contenthash:7]";
 const uniqueFileChunkName = `${uniqueFileName}.chunk`;
 
@@ -30,9 +28,10 @@ module.exports = () => ({
         clean: true
     },
     resolve: {
-        alias: Object.fromEntries(
-            Object.entries(packageJson._moduleAliases).map(([key, value]) => [key, path.join(__dirname, value)])
-        ),
+        alias: {
+            app: path.resolve(__dirname),
+            src: path.join(__dirname, "src")
+        },
         extensions: [".js", ".vue", ".scss"]
     },
     module: {
@@ -77,7 +76,7 @@ module.exports = () => ({
         open: true,
         compress: true,
         port: "auto",
-        hot: "only"
+        hot: false
     },
     plugins: [
         new webpack.DefinePlugin({
@@ -119,6 +118,8 @@ module.exports = () => ({
             chunkFilename: `css/${uniqueFileChunkName}.css`
         }),
 
+        // TODO добавить поддержку поддиректорий
+        // @see https://github.com/antfu/unplugin-vue-components#configuration (deep: true)
         UnpluginVueComponentsPlugin({
             directives: true,
             resolvers: [
@@ -128,17 +129,17 @@ module.exports = () => ({
                         if (name.startsWith("App")) {
                             return {
                                 name: "default",
-                                from: `@/plugins/directives/${getFilenameForUnplugin(name, "App")}`
+                                from: `src/plugins/directives/${getFilenameForUnplugin(name, "App")}`
                             };
                         }
                     }
                 },
                 (name) => {
                     if (name.startsWith("AppLayout")) {
-                        return { name: "default", from: `@/layouts/${getFilenameForUnplugin(name, "AppLayout")}` };
+                        return { name: "default", from: `src/layouts/${getFilenameForUnplugin(name, "AppLayout")}` };
                     }
                     if (name.startsWith("App")) {
-                        return { name: "default", from: `@/components/${getFilenameForUnplugin(name, "App")}` };
+                        return { name: "default", from: `src/components/${getFilenameForUnplugin(name, "App")}` };
                     }
                 }
             ]
@@ -163,8 +164,7 @@ module.exports = () => ({
         }
     },
     cache: {
-        type: "filesystem",
-        cacheDirectory: path.resolve(__dirname, ".webpackcache")
+        type: "filesystem"
     },
     stats: {
         errorDetails: true

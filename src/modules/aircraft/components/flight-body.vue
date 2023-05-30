@@ -3,13 +3,13 @@
         :config="{
             points: [
                 pos.start.x,
-                pos.start.y + pos.flight.height - config.brackets.size,
+                pos.end.y - config.row.padding - config.brackets.size,
                 pos.start.x,
-                pos.start.y + pos.flight.height,
-                pos.start.x + pos.flight.width,
-                pos.start.y + pos.flight.height,
-                pos.start.x + pos.flight.width,
-                pos.start.y + pos.flight.height - config.brackets.size
+                pos.end.y - config.row.padding,
+                pos.end.x,
+                pos.end.y - config.row.padding,
+                pos.end.x,
+                pos.end.y - config.row.padding - config.brackets.size
             ],
             stroke: config.brackets.strokeColor
         }"
@@ -21,10 +21,6 @@ import config from "../config";
 
 export default {
     props: {
-        flight: {
-            type: Object,
-            required: true
-        },
         pos: {
             type: Object,
             required: true

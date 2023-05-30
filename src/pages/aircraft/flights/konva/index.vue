@@ -9,13 +9,15 @@
             <k-stage v-if="configs.stage.height" ref="stage" :config="configs.stage">
                 <main-layer
                     ref="main"
-                    @flight-rect-pointerdown="
+                    :width-correction-px="widthCorrectionPx"
+                    :height-correction-px="heightCorrectionPx"
+                    @flight-service-pointerdown="
                         toast.showInfo(module.getFlightSummary($event), {
                             timeout: moduleConfig.mainLayer.flightRectTimeoutMs
                         })
                     "
-                    @flight-rect-pointerenter="stage.container().style.cursor = 'pointer'"
-                    @flight-rect-pointerleave="stage.container().style.cursor = 'default'"
+                    @flight-service-pointerenter="stage.container().style.cursor = 'pointer'"
+                    @flight-service-pointerleave="stage.container().style.cursor = 'default'"
                 >
                     <template #timeline-grid>
                         <timeline-grid />
@@ -39,18 +41,18 @@
 <script>
 import { useFps } from "@vueuse/core";
 import { useRoute } from "vue-router";
-import toast from "@/modules/toast";
+import toast from "src/modules/toast";
 
-import module from "@/modules/aircraft";
-import useStore from "@/modules/aircraft/store";
-import moduleConfig from "@/modules/aircraft/config";
+import module from "src/modules/aircraft";
+import useStore from "src/modules/aircraft/store";
+import moduleConfig from "src/modules/aircraft/config";
 
-import MainLayer from "@/modules/aircraft/views/main-layer-konva";
-import FixedAsideLayer from "@/modules/aircraft/views/fixed-aside-layer";
-import FixedHeaderLayer from "@/modules/aircraft/views/fixed-header-layer";
-import StageScrollbarLayer from "@/modules/aircraft/views/stage-scrollbar-layer";
-import TimelineGrid from "@/modules/aircraft/views/timeline-grid";
-import TimelineLegend from "@/modules/aircraft/views/timeline-legend";
+import TimelineGrid from "src/modules/aircraft/views/timeline-grid";
+import TimelineLegend from "src/modules/aircraft/views/timeline-legend";
+import MainLayer from "src/modules/aircraft/views/layers/konva-main";
+import FixedAsideLayer from "src/modules/aircraft/views/layers/fixed-aside";
+import FixedHeaderLayer from "src/modules/aircraft/views/layers/fixed-header";
+import StageScrollbarLayer from "src/modules/aircraft/views/layers/stage-scrollbar";
 
 export default {
     components: {
@@ -63,10 +65,9 @@ export default {
     },
     data() {
         return {
-            moduleConfig,
-
             module,
             store: useStore(),
+            moduleConfig,
 
             toast,
 
@@ -83,6 +84,9 @@ export default {
                     }
                 }
             },
+
+            widthCorrectionPx: moduleConfig.fixedAside.width,
+            heightCorrectionPx: moduleConfig.fixedHeader.height,
 
             fps: useFps()
         };
@@ -105,11 +109,13 @@ export default {
     methods: {
         async init() {
             const { aircraftsCount, flightsCount } = useRoute().query;
+            module.timeline.setWidthCorrectionPx(this.widthCorrectionPx);
+            module.timeline.setHeightCorrectionPx(this.heightCorrectionPx);
             await module.fetch(aircraftsCount, flightsCount);
-            await this.initConfigs();
+            await this.initStage();
         },
 
-        async initConfigs() {
+        async initStage() {
             window.addEventListener("resize", _.throttle(this.actualizeStageDimensions, 100));
             this.actualizeStageDimensions();
 
@@ -135,7 +141,7 @@ export default {
             this.configs.stage.width = Math.min(module.timeline.totalWidth(), this.$refs.stageContainer.offsetWidth);
             this.configs.stage.height = Math.min(module.timeline.totalHeight(), this.$refs.stageContainer.offsetHeight);
             if (!this.stage) {
-                setImmediate(this.actualizeStageDimensions);
+                setTimeout(this.actualizeStageDimensions, 0);
                 return;
             }
             this.stage.getContainer().style.border = `${this.store.aircrafts.length ? "1px solid black" : "none"}`;
@@ -146,7 +152,7 @@ export default {
 
 <style lang="scss" scoped>
 @use "sass:math";
-@use "@/assets/scss/_base";
+@use "src/css/_base";
 
 :deep(.main) {
     position: relative;
@@ -166,28 +172,22 @@ export default {
 }
 
 .fps {
+    z-index: 2;
     left: 0;
 }
 
+$width: 80;
+$height: 80;
+
 .stage-container {
     display: flex;
+    width: $width * 1vw;
+    width: $width * 1svw;
     min-width: calc(v-bind("moduleConfig.mainLayer.noAircraftsMessage.width") * 1px);
-    min-height: 300px;
+    height: $height * 1vh;
+    height: $height * 1svh;
+    min-height: calc(v-bind("moduleConfig.mainLayer.noAircraftsMessage.height") * 1px);
     align-items: center;
     justify-content: center;
-
-    @media not all and (any-pointer: coarse) {
-        width: 60vw;
-        width: 60svw;
-        height: 60vh;
-        height: 60svh;
-    }
-
-    @media (any-pointer: coarse) {
-        width: 90vw;
-        width: 90svw;
-        height: 80vh;
-        height: 80svh;
-    }
 }
 </style>

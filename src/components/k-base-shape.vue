@@ -3,7 +3,7 @@ export default {
     props: {
         config: {
             type: Object,
-            default: () => {}
+            required: true
         }
     },
 
@@ -22,5 +22,11 @@ export default {
             }
         }
     }
+
+    // ,methods: {
+    //   getStage(){
+    //     return this.$el.parentElement.__vnode.ctx.exposed.getStage()
+    //   }
+    // }
 };
 </script>

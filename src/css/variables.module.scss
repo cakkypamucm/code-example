@@ -1,0 +1,8 @@
+@use "base";
+
+/* stylelint-disable property-no-unknown */
+:export {
+    font-family: base.$font-family;
+    help-text-color: base.$help-text-color;
+}
+/* stylelint-enable */

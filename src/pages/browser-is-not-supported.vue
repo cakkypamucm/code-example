@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import helper from "@/helpers/frontend";
+import helper from "src/helpers/frontend";
 
 export default {
     data() {

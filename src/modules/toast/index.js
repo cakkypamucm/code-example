@@ -1,8 +1,8 @@
 import { createToastInterface } from "vue-toastification";
-import helper from "@/helpers/frontend";
+import helper from "src/helpers/frontend";
 
 import "vue-toastification/dist/index.css";
-import "./scss/index";
+import "./css/index";
 
 class Toast {
     constructor() {

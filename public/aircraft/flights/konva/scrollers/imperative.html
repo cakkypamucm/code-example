@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Konva Canvas Scrolling Demo - Imperative</title>
+        <link href="//fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet" type="text/css" />
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                background-color: #f0f0f0;
+                height: 100%;
+                overflow: auto;
+                font-family: "Roboto Slab", sans-serif;
+            }
+
+            #large-container {
+                width: 3000px;
+                height: 3000px;
+                overflow: hidden;
+            }
+
+            #scroll-container {
+                width: calc(100% - 22px);
+                height: calc(100vh - 22px);
+                overflow: auto;
+                margin: 10px;
+                border: 1px solid grey;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="scroll-container">
+            <div id="large-container">
+                <div id="container"></div>
+            </div>
+        </div>
+        <script src="//unpkg.com/konva@9.0.2/konva.js"></script>
+        <script src="//unpkg.com/dayjs"></script>
+        <script type="module">
+            var urlParams = new URLSearchParams(window.location.search);
+            var tailsNum = urlParams.get("aircraftsCount");
+            var legsNum = urlParams.get("flightsCount");
+            // padding will increase the size of stage
+            // so scrolling will look smoother
+            var PADDING_SMOOTH_SCROLL = 500;
+
+            var now = Date.now();
+            var timeRange = 3 * 24 * 3600 * 1000;
+
+            var chartSettings = {
+                timeScale: {
+                    from: now,
+                    to: now + timeRange,
+                    range: timeRange
+                },
+                stage: {
+                    width: 0,
+                    height: 0
+                }
+            };
+
+            var stage = new Konva.Stage({
+                container: "container",
+                width: window.innerWidth + PADDING_SMOOTH_SCROLL * 2,
+                height: window.innerHeight + PADDING_SMOOTH_SCROLL * 2
+            });
+            chartSettings.stage.width = window.innerWidth;
+            chartSettings.stage.height = window.innerHeight;
+
+            var layer = new Konva.Layer();
+            stage.add(layer);
+
+            function tsToPositionX(ts) {
+                return chartSettings.stage.width * (ts / chartSettings.timeScale.range);
+            }
+
+            // config
+            const betweenItemsLineStroke = "#cecece";
+            const mainLayerRectRegularFill = "#8eaaff";
+            const scrollbarRegularFill = "#c1c1c1";
+
+            const shortTimeFormat = "H";
+            const timeFormat = `HH:mm`;
+            const shortDateFormat = "DD.MM";
+            const dateFormat = `DD MMM, ${timeFormat}`;
+
+            const noAircraftsMessageText = "Добавьте сюда воздушные суда";
+            const noAircraftsFontSize = 16;
+
+            var config = {
+                row: {
+                    height: 60,
+                    padding: 10
+                },
+                stageBackgroundColor: "white",
+                fixedLayerBorderStroke: "black",
+
+                betweenItemsLineStroke,
+
+                mainLayer: {
+                    flightRectTimeoutMs: 4000,
+                    rect: {
+                        regularFill: mainLayerRectRegularFill,
+                        minimumPaddingX: 0,
+                        strokeWidth: 2
+                    },
+                    noAircraftsMessage: {
+                        text: noAircraftsMessageText,
+                        fontSize: noAircraftsFontSize
+                    }
+                },
+
+                fixedAside: {
+                    width: 110
+                },
+
+                fixedHeader: {
+                    height: 40
+                },
+
+                stageScrollbarLayer: {
+                    bar: {
+                        minimumGreaterDimension: 64,
+                        padding: 0,
+                        regularFill: scrollbarRegularFill,
+                        opacity: 0.7
+                    },
+
+                    aircraftNumber: {
+                        y: 22,
+                        fontSize: 12
+                    },
+
+                    datetime: {
+                        text: "Дата/время",
+                        y: 5,
+                        fontSize: 12
+                    }
+                },
+
+                timelineGrid: {
+                    opacity: {
+                        specialHour: 1,
+                        regularHour: 0.3
+                    }
+                },
+
+                timelineLegend: {
+                    startOfDay: {
+                        underlineY: 26,
+                        textStartY: 8,
+                        dateFormat: shortDateFormat
+                    },
+
+                    startOfQuarterDay: {
+                        underlineY: 32,
+                        textStartY: 18,
+                        fontSize: 12,
+                        dateFormat: timeFormat
+                    }
+                },
+
+                chartTitle: "Расписание перелетов",
+                departure: "Вылет",
+                arrival: "Посадка",
+
+                aircraft: {
+                    generateId: () => +Math.random().toFixed(5).slice(2),
+                    number: "Номер борта",
+                    prefixName: "RA-"
+                },
+
+                flight: {
+                    types: {
+                        service: {
+                            availability: {
+                                id: "availability",
+                                fill: "#7f84ea",
+                                text: "Availability"
+                            },
+
+                            maintenance: {
+                                id: "maintenance",
+                                fill: "#cd7e31",
+                                text: "Maintenance"
+                            }
+                        }
+                    }
+                },
+
+                arrow: {
+                    color: "black",
+                    pointerSize: 2,
+                    strokeWidth: 2,
+                    length: 20,
+                    fontSize: 10,
+                    correctionRelatedFontDateY: 3
+                },
+
+                brackets: {
+                    size: 10,
+                    strokeColor: "blue"
+                },
+
+                timeFormat,
+                shortTimeFormat,
+                dateFormat,
+                shortDateFormat
+            };
+
+            // service
+            var aircraftService = {
+                fetch(aircraftsCount, flightsCount) {
+                    return new Promise((resolve) => resolve(this.generate(aircraftsCount, flightsCount)));
+                },
+
+                generate(aircraftsCount, flightsCount) {
+                    aircraftsCount = Number.parseInt(aircraftsCount);
+                    if (Number.isNaN(aircraftsCount) || aircraftsCount < 0) {
+                        aircraftsCount = 12;
+                    }
+                    flightsCount = Number.parseInt(flightsCount);
+                    if (Number.isNaN(flightsCount) || flightsCount <= 0) {
+                        flightsCount = 10;
+                    }
+
+                    const crossRowLinkedRects = [];
+                    const aircraftAlreadyWithArrow = {};
+
+                    const averageDurationHours = 4;
+                    const aircrafts = [...Array(aircraftsCount).keys()].map((aircraftIndex) => {
+                        const id = config.aircraft.generateId();
+                        const aircraft = {
+                            id,
+                            name: `${config.aircraft.prefixName + id}`
+                        };
+                        const initialDate = dayjs().subtract(1, "day").startOf("hour");
+                        aircraft.flights = [...Array(flightsCount).keys()].map((flightIndex) => {
+                            let departureDate = initialDate.add(
+                                Math.round((flightIndex + Math.random()) * averageDurationHours * 4) / 4,
+                                "hour"
+                            );
+                            const arrivalDate = departureDate.add(
+                                initialDate
+                                    .add(Math.round((flightIndex + 1) * averageDurationHours), "hour")
+                                    .diff(departureDate, "hour"),
+                                "hour"
+                            );
+                            if (arrivalDate.isSame(departureDate)) {
+                                departureDate = arrivalDate.subtract(45, "minute");
+                            }
+                            const flight = {
+                                id: config.aircraft.generateId(),
+                                departureDate: departureDate.toDate(),
+                                arrivalDate: arrivalDate.toDate(),
+                                type: {
+                                    id: "usual"
+                                }
+                            };
+                            if (Math.random() > 0.8) {
+                                flight.type = {
+                                    id: "service",
+                                    name:
+                                        Math.random() > 0.5
+                                            ? config.flight.types.service.availability.id
+                                            : config.flight.types.service.maintenance.id
+                                };
+                                flight.type.text = config.flight.types.service[flight.type.name].text;
+                                flight.type.fill = config.flight.types.service[flight.type.name].fill;
+                            }
+                            this.generateAllCrossRowLinkedRects({
+                                crossRowLinkedRects,
+                                aircraftIndex,
+                                flight,
+                                aircraftAlreadyWithArrow
+                            });
+                            return flight;
+                        });
+                        return aircraft;
+                    });
+
+                    this.setLinkToCrossRowLinkedRects(crossRowLinkedRects);
+                    return aircrafts;
+                },
+
+                generateAllCrossRowLinkedRects({
+                    crossRowLinkedRects,
+                    aircraftIndex,
+                    flight,
+                    aircraftAlreadyWithArrow
+                }) {
+                    if (flight.type.id === "service" && !aircraftAlreadyWithArrow[aircraftIndex]) {
+                        crossRowLinkedRects.push(flight);
+                        aircraftAlreadyWithArrow[aircraftIndex] = true;
+                    }
+                },
+
+                setLinkToCrossRowLinkedRects(crossRowLinkedRects) {
+                    crossRowLinkedRects.forEach((flight, index) => {
+                        flight.linkTo =
+                            index % 2 === 1 ? crossRowLinkedRects[index - 1]?.id : crossRowLinkedRects[index + 1]?.id;
+                    });
+                }
+            };
+
+            var padding = {
+                betweenBodyAndArrows: 7,
+                x: 2 * config.arrow.strokeWidth,
+                y: config.arrow.length + config.row.padding,
+                date: 12
+            };
+            var aircrafts = await aircraftService.fetch(tailsNum, legsNum);
+            var nodes = [];
+            aircrafts.forEach((aircraft, index) => {
+                aircraft.flights.forEach((flight) => {
+                    var x = Math.ceil(tsToPositionX(flight.departureDate.getTime() - chartSettings.timeScale.from));
+                    var y = 10 + config.row.padding + index * config.row.height;
+                    var width = Math.ceil(tsToPositionX(flight.arrivalDate.getTime() - flight.departureDate.getTime()));
+                    var height = config.row.height - 2 * config.row.padding;
+                    var pos = {
+                        start: {
+                            x: x,
+                            y: y
+                        },
+                        end: {
+                            x: x + width,
+                            y: y + height
+                        }
+                    };
+
+                    if (flight.type.id === "service") {
+                        nodes.push(
+                            new Konva.Rect({
+                                x: pos.start.x,
+                                y: pos.start.y - config.row.padding,
+                                width,
+                                height,
+                                fill: flight.type.fill,
+                                stroke: flight.type.fill,
+                                strokeWidth: 2,
+                                perfectDrawEnabled: false
+                            })
+                        );
+                        nodes.push(
+                            new Konva.Text({
+                                text: flight.type.text,
+                                x: pos.start.x,
+                                y: pos.start.y - config.row.padding,
+                                width,
+                                height,
+
+                                verticalAlign: "middle",
+                                fontFamily: "Roboto Slab",
+                                fontSize: 16,
+                                align: "center",
+                                fill: "black",
+                                wrap: "none",
+                                ellipsis: true
+                            })
+                        );
+                    } else if (flight.type.id === "usual") {
+                        nodes.push(
+                            new Konva.Arrow({
+                                x: pos.start.x + padding.x,
+                                y: pos.end.y - padding.y - padding.betweenBodyAndArrows,
+                                points: [0, config.arrow.length, 0, 0],
+                                pointerLength: config.arrow.pointerSize,
+                                pointerWidth: config.arrow.pointerSize,
+                                fill: config.arrow.color,
+                                stroke: config.arrow.color,
+                                strokeWidth: config.arrow.strokeWidth
+                            })
+                        );
+                        nodes.push(
+                            new Konva.Text({
+                                text: dayjs(flight.departureDate).format("HH:mm"),
+                                x: pos.start.x + padding.x + padding.date,
+                                y:
+                                    pos.end.y -
+                                    padding.y -
+                                    padding.betweenBodyAndArrows -
+                                    config.arrow.correctionRelatedFontDateY,
+                                width,
+                                height,
+                                rotation: 90,
+                                align: "left",
+                                fontFamily: "Roboto Slab",
+                                fontSize: config.arrow.fontSize,
+
+                                fill: "black",
+                                wrap: "none",
+                                ellipsis: true
+                            })
+                        );
+                        nodes.push(
+                            new Konva.Line({
+                                points: [
+                                    pos.start.x,
+                                    pos.end.y - config.row.padding - config.brackets.size,
+                                    pos.start.x,
+                                    pos.end.y - config.row.padding,
+                                    pos.end.x,
+                                    pos.end.y - config.row.padding,
+                                    pos.end.x,
+                                    pos.end.y - config.row.padding - config.brackets.size
+                                ],
+                                stroke: config.brackets.strokeColor
+                            })
+                        );
+
+                        nodes.push(
+                            new Konva.Text({
+                                text: dayjs(flight.arrivalDate).format("HH:mm"),
+                                x:
+                                    pos.end.x -
+                                    padding.x +
+                                    padding.x -
+                                    2 * config.arrow.pointerSize -
+                                    config.arrow.strokeWidth -
+                                    1,
+                                y:
+                                    pos.end.y -
+                                    padding.y -
+                                    padding.betweenBodyAndArrows -
+                                    config.arrow.correctionRelatedFontDateY,
+                                width,
+                                height,
+
+                                rotation: 90,
+                                align: "left",
+                                fontFamily: "Roboto Slab",
+                                fontSize: config.arrow.fontSize,
+                                fill: "black",
+                                wrap: "none",
+                                ellipsis: true
+                            })
+                        );
+                        nodes.push(
+                            new Konva.Arrow({
+                                x: pos.end.x - padding.x,
+                                y: pos.end.y - padding.y - padding.betweenBodyAndArrows,
+                                points: [0, 0, 0, config.arrow.length],
+                                pointerLength: config.arrow.pointerSize,
+                                pointerWidth: config.arrow.pointerSize,
+                                fill: config.arrow.color,
+                                stroke: config.arrow.color,
+                                strokeWidth: config.arrow.strokeWidth
+                            })
+                        );
+                    }
+                });
+            });
+
+            for (var i = 0; i < nodes.length; i++) {
+                layer.add(nodes[i]);
+            }
+
+            var scrollContainer = document.getElementById("scroll-container");
+
+            function repositionStage() {
+                var dx = scrollContainer.scrollLeft - PADDING_SMOOTH_SCROLL;
+                var dy = scrollContainer.scrollTop - PADDING_SMOOTH_SCROLL;
+                stage.container().style.transform = "translate(" + dx + "px, " + dy + "px)";
+                stage.x(-dx);
+                stage.y(-dy);
+            }
+
+            scrollContainer.addEventListener("scroll", repositionStage);
+            repositionStage();
+        </script>
+    </body>
+</html>

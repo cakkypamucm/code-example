@@ -1,42 +1,43 @@
 <template>
-    <app-k-line
+    <app-k-arrow
         :config="{
-            points: [
-                baseX,
-                baseY + config.arrow.mainHeight,
-                baseX,
-                baseY,
-                baseX + config.arrow.pointerSize,
-                baseY + config.arrow.pointerSize,
-                baseX - config.arrow.pointerSize,
-                baseY + config.arrow.pointerSize
-            ],
-            stroke: config.arrow.color
+            x: baseX,
+            y: baseY,
+            points: [0, config.arrow.length, 0, 0],
+            pointerLength: config.arrow.pointerSize,
+            pointerWidth: config.arrow.pointerSize,
+            fill: config.arrow.color,
+            stroke: config.arrow.color,
+            strokeWidth: config.arrow.strokeWidth
         }"
     />
     <app-k-text
         :config="{
-            text: date,
-            x: baseX + pos.padding.date,
-            y: baseY + config.arrow.pointerSize - 5,
+            text: dateFormatted,
+            x: baseX + padding.date,
+            y: baseY - config.arrow.correctionRelatedFontDateY,
             rotation: 90,
             align: 'left',
-            width: 50,
-            fontSize: 10
+            fontSize: config.arrow.fontSize
         }"
     />
 </template>
 
 <script>
+import helper from "src/helpers/frontend";
 import config from "../config";
 
 export default {
     props: {
-        flight: {
+        pos: {
             type: Object,
             required: true
         },
-        pos: {
+        departureDate: {
+            type: Date,
+            required: true
+        },
+        padding: {
             type: Object,
             required: true
         }
@@ -44,11 +45,19 @@ export default {
     data() {
         return {
             config,
-
-            baseX: this.pos.start.x + this.pos.padding.x,
-            baseY: this.pos.start.y + this.pos.padding.y,
-            date: dayjs(this.flight.departureDate).format("HH:mm")
+            helper
         };
+    },
+    computed: {
+        dateFormatted() {
+            return dayjs(this.departureDate).format("HH:mm");
+        },
+        baseX() {
+            return this.pos.start.x + this.padding.x;
+        },
+        baseY() {
+            return this.pos.end.y - this.padding.y - this.padding.betweenBodyAndArrows;
+        }
     }
 };
 </script>

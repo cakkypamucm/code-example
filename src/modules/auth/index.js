@@ -41,9 +41,7 @@ export default class Auth {
     async login() {
         const data = await this.store.login();
         const currentRoute = this.getCurrentRoute();
-        const {
-            redirect: { path, query }
-        } = currentRoute.query;
+        const { redirect: { path, query } = {} } = currentRoute.query;
         if (!path || path === currentRoute.path) {
             this.$router.push({ name: "index", query });
         } else {
@@ -60,6 +58,7 @@ export default class Auth {
     async ensurePackageVersion() {
         const version = await this.getPackageVersion();
         if (version !== import.meta.env.packageVersion) {
+            console.debug("выпущен новый релиз, необходим logout, затем login");
             await this.setPackageVersion(import.meta.env.packageVersion);
             this.$router.push({ name: "logout" });
         }

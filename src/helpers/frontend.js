@@ -1,6 +1,10 @@
 import storage from "store2";
+import scssVars from "src/css/variables.module";
 
 const isMobileDevice = window.matchMedia("(any-pointer: coarse)").matches;
+
+const canvas = document.createElement("canvas");
+const ctx = canvas.getContext("2d");
 
 const utils = {
     storage,
@@ -48,6 +52,23 @@ const utils = {
 
     isMobileDevice() {
         return isMobileDevice;
+    },
+
+    canvas: {
+        // @see https://developer.mozilla.org/en-US/docs/Web/API/TextMetrics#measuring_text_width
+        getTextWidth({ text, font, fontSize, fontFamily = scssVars["font-family"] }) {
+            ctx.font = font || `${fontSize}px ${fontFamily}`;
+            return Math.ceil(ctx.measureText(text).width);
+        },
+
+        // @see https://longviewcoder.com/2021/02/11/html5-canvas-text-line-height-measurement/ for more precision
+        getTextHeight({ fontSize, fontFamily = scssVars["font-family"] }) {
+            const font = `bold ${fontSize}px ${fontFamily}`;
+            ctx.font = font;
+
+            // @see https://stackoverflow.com/a/13318387
+            return utils.canvas.getTextWidth({ text: "M", font });
+        }
     }
 };
 

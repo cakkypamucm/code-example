@@ -3,19 +3,10 @@
 </template>
 
 <script>
-import KBaseShape from "@/components/k-base-shape";
+import KBaseShape from "src/components/k-base-shape";
 
 export default {
     extends: KBaseShape,
-    inheritAttrs: false,
-
-    data() {
-        return {
-            finalConfig: {
-                // for dev purposes
-                fill: "aquamarine"
-            }
-        };
-    }
+    inheritAttrs: false
 };
 </script>

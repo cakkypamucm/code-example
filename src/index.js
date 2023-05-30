@@ -20,14 +20,29 @@ import accessibilityInit from "highcharts/modules/accessibility";
 import axios from "axios";
 import axiosRetry from "axios-retry";
 
-import App from "@/app";
-import router from "@/router/index";
-import "@/assets/scss/app";
+import FontFaceObserver from "fontfaceobserver";
+import scssVars from "src/css/variables.module";
+import App from "src/app";
+import router from "src/router/index";
+
+import "@fontsource/roboto-slab";
+import "src/css/app";
+
+// bug - custom font некорректно отображается при первоначальной отрисовке в canvas,
+// только после первого redraw (после скролла, например) отображение сменяется на корректное, т.е. нужно
+// либо принудительно вызывать redraw у всей stage,
+// либо использовать данный workaround
+const customFont = scssVars["font-family"].split(",")[0].slice(1, -1);
+new FontFaceObserver(customFont).load();
 
 const app = createApp(App);
 app.config.globalProperties = {
     productionAbsoluteUrl: import.meta.env.productionAbsoluteUrl,
-    Math
+    Math,
+    logValueToConsole(value) {
+        console.debug(value);
+        return value;
+    }
 };
 
 dayjs.locale("ru");
@@ -70,4 +85,4 @@ _.templateSettings.interpolate = /{{([\S\s]+?)}}/g;
 _.templateSettings.evaluate = /{#([\S\s]+?)#}/g;
 window._ = _;
 
-// TODO обновлять @/helpers/supported-browsers-regexp в прекоммит-хуке, если изменен .browserslistrc
+// TODO обновлять src/helpers/supported-browsers-regexp в прекоммит-хуке, если изменен .browserslistrc

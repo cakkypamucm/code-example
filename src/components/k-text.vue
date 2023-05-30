@@ -3,7 +3,9 @@
 </template>
 
 <script>
-import KBaseShape from "@/components/k-base-shape";
+import KBaseShape from "src/components/k-base-shape";
+import scssVars from "src/css/variables.module";
+import helper from "src/helpers/frontend";
 
 export default {
     extends: KBaseShape,
@@ -13,7 +15,7 @@ export default {
         return {
             finalConfig: {
                 fontSize: 16,
-                fontFamily: "Helvetica",
+                fontFamily: scssVars["font-family"],
                 verticalAlign: "top",
                 align: "center",
                 fill: "black",
@@ -24,11 +26,23 @@ export default {
     },
 
     created() {
-        if (!this.finalConfig.width) {
-            console.warn("нужно задать width для работы ellipsis и align");
+        const width = helper.canvas.getTextWidth({
+            text: this.finalConfig.text,
+            font: `${this.finalConfig.fontSize}px ${this.finalConfig.fontFamily}`
+        });
+        const height = helper.canvas.getTextHeight(this.finalConfig);
+
+        if (this.finalConfig.width == null) {
+            this.finalConfig.width = width;
         }
-        if (this.finalConfig.verticalAlign !== "top" && !this.finalConfig.height) {
-            console.debug("нужно задать height для работы verticalAlign");
+        // if (width > this.finalConfig.width) {
+        //     console.debug(
+        //         `real width ${width} more than passed width ${this.finalConfig.width} for text ${this.finalConfig.text}`
+        //     );
+        // }
+
+        if (this.finalConfig.height == null) {
+            this.finalConfig.height = height;
         }
     }
 };

@@ -24,8 +24,8 @@
 </template>
 
 <script>
-import routeModule from "@/modules/vehicle-route/index";
-import Route from "@/modules/vehicle-route/views/id";
+import routeModule from "src/modules/vehicle/index";
+import Route from "src/modules/vehicle/views/id";
 
 export default {
     components: {

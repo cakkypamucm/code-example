@@ -21,13 +21,13 @@
 2. `store` данных модуля
 3. `config` конфигурацию модуля (настройки, константы, `i18n`, например)
 4. `./views/*` - различные отображения, которые могут содержать инстансы `components`
-5. `./components/*` - различные `components`, которые могут:
+5. `./components/*` которые:
 
--   содержать инстансы `components`
--   обращаться к `config`
--   **не** могут обращаться к `router`/`index`/`store`/`service`/`./views/*`
+-   могут содержать инстансы `components`
+-   могут обращаться к `config`
+-   **не** могут обращаться к `router`|`index`|`store`|`service`|`./views/*`
 
-[//]: # "FIXME добавить в linting контрактов п.5 ./components/*"
+[//]: # "FIXME реализовать linting контрактов п.5"
 
 ### [components](components)
 

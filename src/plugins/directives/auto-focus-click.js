@@ -4,9 +4,9 @@ export default {
             el.click();
 
             // предотвращает возможную потерю фокуса
-            setImmediate(() => {
+            setTimeout(() => {
                 el.focus();
-            });
+            }, 0);
         }
     }
 };
