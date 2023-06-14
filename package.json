@@ -32,6 +32,8 @@
         "css-minimizer-webpack-plugin": "^5.0.0",
         "eslint": "^7.32.0",
         "eslint-config-cakkypamucm": "github:cakkypamucm/eslint-config",
+        "eslint-config-vue3-cakkypamucm": "github:cakkypamucm/eslint-config-vue3",
+        "eslint-import-resolver-webpack": "^0.13.2",
         "html-webpack-plugin": "^5.5.0",
         "husky": "^8.0.3",
         "mini-css-extract-plugin": "^2.7.5",

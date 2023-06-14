@@ -9,10 +9,11 @@ const storeErrorMessage = "Store в компонентах запрещен! И�
 const routerErrorMessageForComponents = routerErrorMessage("компонентах");
 const routerSelector = "Identifier[name='$router']";
 module.exports = {
-    extends: ["eslint-config-cakkypamucm", "plugin:vue-scoped-css/vue3-recommended", "plugin:vue/vue3-recommended"],
+    extends: ["eslint-config-cakkypamucm", "eslint-config-vue3-cakkypamucm"],
     /* eslint-enable sort-keys/sort-keys-fix */
     rules: {
         "capitalized-comments": ["error", "never", { ignorePattern: "TODO|FIXME" }],
+        "id-length": [2, { exceptions: ["_", "i", "j"], properties: "never" }],
 
         "import/extensions": [
             "error",
@@ -30,15 +31,6 @@ module.exports = {
             }
         ],
 
-        "vue/block-lang": [
-            "error",
-            {
-                style: {
-                    lang: "scss"
-                }
-            }
-        ],
-        "vue/block-tag-newline": "error",
         "vue/component-name-in-template-casing": [
             "error",
             "kebab-case",
@@ -47,32 +39,7 @@ module.exports = {
                 registeredComponentsOnly: false
             }
         ],
-        "vue/custom-event-name-casing": ["error", "kebab-case"],
-        "vue/html-button-has-type": "error",
-        "vue/html-comment-content-newline": "error",
-        "vue/html-comment-content-spacing": "error",
-        "vue/html-comment-indent": "error",
-        "vue/next-tick-style": "error",
-        "vue/no-duplicate-attr-inheritance": "error",
-        "vue/no-irregular-whitespace": "error",
-        "vue/no-multiple-objects-in-class": "error",
-        "vue/no-potential-component-option-typo": [
-            "error",
-            {
-                presets: ["all"]
-            }
-        ],
-        "vue/no-static-inline-styles": [
-            "error",
-            {
-                allowBinding: true
-            }
-        ],
-        "vue/no-template-target-blank": "error",
-        "vue/no-unused-refs": "error",
-        "vue/no-useless-mustaches": "error",
-        "vue/padding-line-between-blocks": "error",
-        "vue/require-explicit-emits": "error"
+        "vue/custom-event-name-casing": ["error", "kebab-case"]
     },
     /* eslint-disable sort-keys/sort-keys-fix */
     overrides: [
@@ -178,7 +145,10 @@ module.exports = {
         $http: true,
         dayjs: true
     },
-    root: true
+    root: true,
+    settings: {
+        "import/resolver": ["node", "webpack"]
+    }
 };
 
 // FIXME дописать проверку импортов внутри файлов в modules, чтоб из собственного модуля импортировали через ../
