@@ -3,7 +3,6 @@
 ### Git
 
 -   git-flow (`master`/`develop`)
--   [commit style](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#commit) :recycle: :new:
 
 ### Каталоги, файлы
 
@@ -12,7 +11,7 @@
 -   семантически похоже на [feature-sliced design](https://habr.com/ru/companies/inDrive/articles/693768/)
 -   имена **всех** файлов/каталогов в [**kebab-case**](https://vuejs.org/style-guide/rules-strongly-recommended.html#single-file-component-filename-casing), исключения лишь для vendor specific  
     _one case to rule them all_
--   [см. дополнительно](/src/README.md)
+-   [src/README.md](src/README.md)
 
 ### Синтаксис
 
@@ -30,9 +29,9 @@
 
 ### Lint
 
--   `eslint` `js,vue,md`
+-   `eslint` `cjs,js,vue,md`
 -   `stylelint` `css,scss,vue`
--   `prettier` `css,scss,js,json,vue,md,html`
+-   `prettier` `css,scss,cjs,js,json,vue,md,html`
 -   `husky` для git client hook == `невалидное не попадает в repo`
 
 ### Vue-specific
@@ -65,6 +64,7 @@
 
 ### TODO
 
+-   [commit style](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#commit) :recycle: :new:
 -   протестировать [webpack/esbuild-loader](https://www.npmjs.com/package/esbuild-loader) :new:
 
 ## Дополнения и изменения, welcome!

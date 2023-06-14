@@ -26,11 +26,12 @@
 
 ### Отсутствие "тормозов" при большом количестве объектов
 
-[Нагрузочное тестирование 1500 объектов](https://cakkypamucm.github.io/code-example/#/aircraft/flights/?aircraftsCount=30&flightsCount=50)
+-   [Нагрузочное тестирование 1500 объектов](https://cakkypamucm.github.io/code-example/#/aircraft/flights/?aircraftsCount=30&flightsCount=50)
+-   официальное [optimizing performance](https://konvajs.org/docs/performance/All_Performance_Tips.html) и еще [одно](https://konvajs.org/docs/performance/Optimize_Animation.html)
 
 ### По возможности низкое потребление оперативной памяти
 
-_Не исследовано_
+Не исследовано
 
 ### Возможность реализации прокрутки
 
@@ -47,7 +48,7 @@ _Не исследовано_
 
 ### Наличие и качество документации по библиотеке
 
-` >= 85/100` :new:
+` >= 90/100` :new:
 
 ### Лицензия, допускающая коммерческое использование
 
@@ -68,7 +69,7 @@ _Не исследовано_
 
 ### Скорость разработки
 
-` >= 80/100 && DX >= 80/100` :new:
+` == 80/100 && DX == 80/100` :new:
 
 ### Поддержка responsive
 
