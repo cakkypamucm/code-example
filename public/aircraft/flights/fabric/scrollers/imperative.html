@@ -14,28 +14,28 @@
                 font-family: "Roboto Slab", sans-serif;
             }
 
-            /*#large-container {*/
-            /*    width: 3000px;*/
-            /*    height: 3000px;*/
-            /*    overflow: hidden;*/
-            /*}*/
-            /**/
-            /*#scroll-container {*/
-            /*    width: calc(100% - 22px);*/
-            /*    height: calc(100vh - 22px);*/
-            /*    overflow: auto;*/
-            /*    margin: 10px;*/
-            /*    border: 1px solid grey;*/
-            /*}*/
+            #large-container {
+                width: 3000px;
+                height: 3000px;
+                overflow: hidden;
+            }
+
+            #scroll-container {
+                width: calc(100% - 22px);
+                height: calc(100vh - 22px);
+                overflow: auto;
+                margin: 10px;
+                border: 1px solid grey;
+            }
         </style>
     </head>
 
     <body>
-        <!--        <div id="scroll-container">-->
-        <!--            <div id="large-container">-->
-        <canvas id="container"></canvas>
-        <!--            </div>-->
-        <!--        </div>-->
+        <div id="scroll-container">
+            <div id="large-container">
+                <canvas id="container"></canvas>
+            </div>
+        </div>
         <script src="https://cdn.jsdelivr.net/npm/fabric@5.3.0/dist/fabric.js"></script>
         <script src="//unpkg.com/dayjs"></script>
         <script type="module">
@@ -438,46 +438,6 @@
                                 })
                             );
 
-                            // nodes.push(
-                            //     new fabric.Line(
-                            //         [
-                            //             pos.start.x,
-                            //             pos.end.y - config.row.padding - config.brackets.size,
-                            //             pos.start.x,
-                            //             pos.end.y - config.row.padding
-                            //         ],
-                            //         {
-                            //             stroke: config.brackets.strokeColor
-                            //         }
-                            //     )
-                            // );
-                            // nodes.push(
-                            //     new fabric.Line(
-                            //         [
-                            //             pos.start.x,
-                            //             pos.end.y - config.row.padding,
-                            //             pos.end.x,
-                            //             pos.end.y - config.row.padding
-                            //         ],
-                            //         {
-                            //             stroke: config.brackets.strokeColor
-                            //         }
-                            //     )
-                            // );
-                            // nodes.push(
-                            //     new fabric.Line(
-                            //         [
-                            //             pos.end.x,
-                            //             pos.end.y - config.row.padding,
-                            //             pos.end.x,
-                            //             pos.end.y - config.row.padding - config.brackets.size
-                            //         ],
-                            //         {
-                            //             stroke: config.brackets.strokeColor
-                            //         }
-                            //     )
-                            // );
-
                             nodes.push(
                                 new fabric.Polyline(
                                     [
@@ -558,18 +518,17 @@
                 //     o.selectable = false;
                 // });
 
-                // var scrollContainer = document.getElementById("scroll-container");
+                var scrollContainer = document.getElementById("scroll-container");
 
-                // function repositionStage() {
-                //     var dx = scrollContainer.scrollLeft - PADDING_SMOOTH_SCROLL;
-                //     var dy = scrollContainer.scrollTop - PADDING_SMOOTH_SCROLL;
-                //     stage.cacheCanvasEl.style.transform = "translate(" + dx + "px, " + dy + "px)";
-                //     // stage.x(-dx);
-                //     // stage.y(-dy);
-                // }
-                //
-                // scrollContainer.addEventListener("scroll", repositionStage);
-                // repositionStage();
+                function repositionStage() {
+                    var dx = scrollContainer.scrollLeft - PADDING_SMOOTH_SCROLL;
+                    var dy = scrollContainer.scrollTop - PADDING_SMOOTH_SCROLL;
+                    stage.lowerCanvasEl.style.transform = "translate(" + dx + "px, " + dy + "px)";
+                    stage.absolutePan({ x: dx, y: dy });
+                }
+
+                scrollContainer.addEventListener("scroll", repositionStage);
+                repositionStage();
             })();
         </script>
     </body>

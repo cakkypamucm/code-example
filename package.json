@@ -1,6 +1,6 @@
 {
     "name": "code-example",
-    "version": "1.17.3",
+    "version": "1.17.4",
     "private": true,
     "main": "src/index.js",
     "scripts": {

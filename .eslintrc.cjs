@@ -39,7 +39,8 @@ module.exports = {
                 registeredComponentsOnly: false
             }
         ],
-        "vue/custom-event-name-casing": ["error", "kebab-case"]
+        "vue/custom-event-name-casing": ["error", "kebab-case"],
+        "vue/html-indent": "off"
     },
     /* eslint-disable sort-keys/sort-keys-fix */
     overrides: [

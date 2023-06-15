@@ -56,7 +56,7 @@ export default {
 
                 title: {
                     useHTML: true,
-                    text: `${config.chartTitle} - <a href="${vm.productionAbsoluteUrl}/code-example/blob/master/src/docs/highcharts-gantt-research.md">research</a>`
+                    text: `${config.chartTitle} - <a href="${vm.productionAbsoluteUrl}/code-example/blob/master/src/docs/research/highcharts-gantt.md">research</a>`
                 },
 
                 xAxis: [

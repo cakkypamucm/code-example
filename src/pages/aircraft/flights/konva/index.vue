@@ -3,7 +3,7 @@
         <div class="fps">FPS: {{ fps }}</div>
         <h3 class="chart-title">
             {{ moduleConfig.chartTitle }} -
-            <a :href="productionAbsoluteUrl + '/code-example/blob/master/src/docs/konva-research.md'">research</a>
+            <a :href="productionAbsoluteUrl + '/code-example/blob/master/src/docs/research/konva.md'">research</a>
         </h3>
         <div ref="stageContainer" class="stage-container">
             <k-stage v-if="configs.stage.height" ref="stage" :config="configs.stage">
