@@ -1,13 +1,9 @@
 /* eslint sort-keys/sort-keys-fix: "error" */
-/* eslint-disable sort-keys/sort-keys-fix */
 
 module.exports = {
-    extends: ["stylelint-config-cakkypamucm"],
-    /* eslint-enable sort-keys/sort-keys-fix */
+    extends: ["stylelint-config-vue-kebab-no-ext-cakkypamucm"],
     rules: {
-        "scss/at-import-partial-extension": "never",
-        "scss/at-import-partial-extension-blacklist": [""],
-
+        "color-hex-length": "long",
         "unit-disallowed-list": [
             ["vw", "vh"],
             {
@@ -16,7 +12,6 @@ module.exports = {
             }
         ]
     }
-    /* eslint-disable sort-keys/sort-keys-fix */
 };
 
 // TODO stylelint plugin like `eslint-plugin-import` find and install

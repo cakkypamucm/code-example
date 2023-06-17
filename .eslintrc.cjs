@@ -9,38 +9,20 @@ const storeErrorMessage = "Store в компонентах запрещен! И�
 const routerErrorMessageForComponents = routerErrorMessage("компонентах");
 const routerSelector = "Identifier[name='$router']";
 module.exports = {
-    extends: ["eslint-config-cakkypamucm", "eslint-config-vue3-cakkypamucm"],
+    extends: ["eslint-config-vue-kebab-no-ext-cakkypamucm"],
     /* eslint-enable sort-keys/sort-keys-fix */
     rules: {
         "capitalized-comments": ["error", "never", { ignorePattern: "TODO|FIXME" }],
         "id-length": [2, { exceptions: ["_", "i", "j"], properties: "never" }],
 
-        "import/extensions": [
-            "error",
-            "never",
-            {
-                ignorePackages: false,
-                pattern: Object.fromEntries("cjs json module svg".split(" ").map((ext) => [ext, "ignorePackages"]))
-            }
-        ],
-
-        "unicorn/filename-case": [
+        "vue/block-lang": [
             "error",
             {
-                case: "kebabCase"
+                style: {
+                    lang: "scss"
+                }
             }
-        ],
-
-        "vue/component-name-in-template-casing": [
-            "error",
-            "kebab-case",
-            {
-                ignores: [],
-                registeredComponentsOnly: false
-            }
-        ],
-        "vue/custom-event-name-casing": ["error", "kebab-case"],
-        "vue/html-indent": "off"
+        ]
     },
     /* eslint-disable sort-keys/sort-keys-fix */
     overrides: [

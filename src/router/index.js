@@ -7,8 +7,7 @@ import Auth from "src/modules/auth/index";
 import helper from "src/helpers/frontend";
 
 function createPage(path) {
-    // eslint-disable-next-line import/extensions
-    return import(/* webpackChunkName: "[request]" */ `src/pages/${path}.vue`);
+    return import(/* webpackChunkName: "[request]" */ `src/pages/${path}`);
 }
 let lastVisitedRouteData;
 const lastVisitedRouteDataStorageId = "app.lastVisitedRoute";

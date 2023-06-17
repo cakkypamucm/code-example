@@ -13,7 +13,7 @@ api.interceptors.response.use((response) => {
 export default {
     async fetch() {
         if (process.env.NODE_ENV === "development") {
-            const { data } = await api.get(`/vehicle/routes-data.json`);
+            const { data } = await api.get("/vehicle/routes-data.json");
             return data;
         }
         if (process.env.NODE_ENV === "production") {

@@ -7,7 +7,7 @@ const mainLayerRectRegularFill = "#8eaaff";
 const scrollbarRegularFill = "#c1c1c1";
 
 const shortTimeFormat = "H";
-const timeFormat = `HH:mm`;
+const timeFormat = "HH:mm";
 const shortDateFormat = "DD.MM";
 const dateFormat = `DD MMM, ${timeFormat}`;
 
